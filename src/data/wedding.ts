@@ -11,7 +11,7 @@ export const COUPLE = {
 export const FAMILIES = {
   bride: {
     house: 'Hanumandlakadi',
-    line: "Hanumandlakadi Family, with near & dear",
+    line: "Hanumandlakadi's Family, with near & dear",
   },
   groom: {
     house: "Nayini",
@@ -22,6 +22,13 @@ export const FAMILIES = {
 export type InviteSide = 'bride' | 'groom'
 
 export const VENUES = {
+  haldiBride: {
+    name: 'Gudikandhula',
+    label: 'Haldi',
+    when: 'Tuesday, 25 August · 5:00 PM',
+    address: 'Gudikandhula, Siddipet',
+    mapsUrl: 'https://maps.google.com/?q=Gudikandhula+Siddipet',
+  },
   gajwel: {
     name: 'Gajwel',
     label: 'Haldi',
@@ -66,8 +73,8 @@ export const EVENTS: WeddingEvent[] = [
     id: 'haldi-bride',
     title: 'Haldi',
     date: 'Tuesday, 25 August 2026',
-    time: '4:00 PM',
-    venue: 'Gajwel',
+    time: '5:00 PM',
+    venue: 'Gudikandhula, Siddipet',
     description: 'A blessing at home, with family and near & dear.',
     whisper: 'Rub the gold with your finger, like a lottery ticket',
     revealType: 'scratch',

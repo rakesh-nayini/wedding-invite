@@ -21,7 +21,7 @@ export default function InviteNote({ event }: { event: WeddingEvent }) {
             {secondName}
           </h3>
           <p className="mt-2 text-xs text-maroon/65">
-            {side === 'groom' ? "Nayini's & Hanumandlakadi Families" : 'Hanumandlakadi & Nayini Families'}
+            {side === 'groom' ? "Nayini's & Hanumandlakadi's Families" : "Hanumandlakadi's & Nayini's Families"}
           </p>
         </>
       )}

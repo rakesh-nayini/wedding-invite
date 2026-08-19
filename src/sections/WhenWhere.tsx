@@ -1,5 +1,6 @@
 import FlipCountdown from '../components/FlipCountdown'
 import { VENUES } from '../data/wedding'
+import { useInvite } from '../hooks/useInvite'
 
 function PinIcon() {
   return (
@@ -13,7 +14,8 @@ function PinIcon() {
 }
 
 export default function WhenWhere() {
-  const cards = [VENUES.gajwel, VENUES.siddipet, VENUES.reception]
+  const { side } = useInvite()
+  const cards = [side === 'bride' ? VENUES.haldiBride : VENUES.gajwel, VENUES.siddipet, VENUES.reception]
 
   return (
     <section

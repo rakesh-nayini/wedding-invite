@@ -17,5 +17,10 @@ export function useMusicPreference() {
     })
   }, [])
 
-  return { enabled, toggle, setEnabled }
+  const turnOn = useCallback(() => {
+    localStorage.setItem(KEY, '1')
+    setEnabled(true)
+  }, [])
+
+  return { enabled, toggle, setEnabled, turnOn }
 }

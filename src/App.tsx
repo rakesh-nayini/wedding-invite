@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import IntroGate from './sections/IntroGate'
 import OurStory from './sections/OurStory'
 import InvitationVideo from './sections/InvitationVideo'
@@ -16,48 +16,48 @@ import { useMusicPreference } from './hooks/useMusicPreference'
 import { InviteProvider, useInvite } from './hooks/useInvite'
 import { asset } from './utils/assets'
 
-function useAmbient(enabled: boolean) {
-  useEffect(() => {
-    if (!enabled) return
-
-    const file = asset('assets/audio/theme.mp3')
-    const audio = new Audio(file)
-    audio.loop = true
-    audio.volume = 0.28
-
-    const start = async () => {
-      try {
-        await audio.play()
-      } catch {
-        /* Autoplay blocked, or no theme.mp3 yet */
-      }
-    }
-
-    const onReady = () => {
-      void start()
-    }
-    audio.addEventListener('canplaythrough', onReady, { once: true })
-    audio.load()
-
-    return () => {
-      audio.removeEventListener('canplaythrough', onReady)
-      audio.pause()
-      audio.src = ''
-    }
-  }, [enabled])
-}
-
 function Experience() {
   const { side } = useInvite()
   const [opened, setOpened] = useState(false)
-  const { enabled: musicOn, toggle: toggleMusic } = useMusicPreference()
+  const { enabled: musicOn, toggle: toggleMusicPref, turnOn: turnMusicOn } = useMusicPreference()
+  const audioRef = useRef<HTMLAudioElement | null>(null)
   useLenis(opened)
   useScrollResponse(opened)
-  useAmbient(opened && musicOn)
+
+  const getAudio = () => {
+    if (!audioRef.current) {
+      const audio = new Audio(asset('assets/audio/theme.mp3'))
+      audio.loop = true
+      audio.volume = 0.28
+      audioRef.current = audio
+    }
+    return audioRef.current
+  }
+
+  const playMusic = () => {
+    turnMusicOn()
+    void getAudio().play()
+  }
+
+  const toggleMusic = () => {
+    if (musicOn) {
+      getAudio().pause()
+      toggleMusicPref()
+    } else {
+      playMusic()
+    }
+  }
 
   useEffect(() => {
     document.body.style.overflow = opened ? '' : 'hidden'
   }, [opened])
+
+  useEffect(() => {
+    return () => {
+      audioRef.current?.pause()
+      audioRef.current = null
+    }
+  }, [])
 
   return (
     <div key={side} className="bg-[var(--paper)] text-[var(--ink)]">
@@ -73,7 +73,15 @@ function Experience() {
           Music {musicOn ? 'On' : 'Off'}
         </button>
       )}
-      <IntroGate open={opened} onOpen={() => setOpened(true)} musicOn={musicOn} onToggleMusic={toggleMusic} />
+      <IntroGate
+        open={opened}
+        onOpen={() => {
+          playMusic()
+          setOpened(true)
+        }}
+        musicOn={musicOn}
+        onToggleMusic={toggleMusic}
+      />
       <main>
         {opened && (
           <>
