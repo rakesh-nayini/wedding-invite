@@ -35,15 +35,15 @@ export default function Events() {
     <section id="events" className="bg-[var(--paper)] px-5 py-10">
       <p className="text-center text-[10px] uppercase tracking-[0.4em] text-gold">The celebrations</p>
       <h2 className="mt-2 text-center font-serif text-3xl text-[var(--ink)]">Haldi · Wedding · Reception</h2>
-      <p className="mx-auto mt-2 max-w-sm text-center text-sm text-[var(--muted)]">
-        Each card has a small surprise. Follow the line under the title — or tap the button if you prefer.
+      <p className="mx-auto mt-3 max-w-sm text-center text-[15px] leading-relaxed text-[var(--ink)]/80">
+        Each card opens with a small action. Read the line above the card, then tap or rub.
       </p>
 
       <div className="mx-auto mt-8 max-w-md space-y-12">
         {events.map((event) => (
           <div key={event.id}>
-            <p className="mb-1 text-center text-[10px] uppercase tracking-[0.3em] text-gold">{event.whisper}</p>
-            <h3 className="mb-4 text-center font-serif text-2xl text-[var(--ink)]">{event.title}</h3>
+            <h3 className="mb-1 text-center font-serif text-2xl text-[var(--ink)]">{event.title}</h3>
+            <p className="mb-4 text-center text-[15px] leading-snug text-maroon">{event.whisper}</p>
             <Reveal event={event} />
           </div>
         ))}

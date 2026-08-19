@@ -38,10 +38,12 @@ export default function ScratchCard({ children, threshold = 0.35, onComplete }: 
       ctx.arc(Math.random() * width, Math.random() * height, Math.random() * 3, 0, Math.PI * 2)
       ctx.fill()
     }
-    ctx.fillStyle = 'rgba(92, 26, 26, 0.55)'
-    ctx.font = '600 18px Outfit, sans-serif'
+    ctx.fillStyle = 'rgba(92, 26, 26, 0.85)'
+    ctx.font = '600 17px Outfit, sans-serif'
     ctx.textAlign = 'center'
-    ctx.fillText('Slide your finger here', width / 2, height / 2)
+    ctx.fillText('Rub this gold with your finger', width / 2, height / 2 - 14)
+    ctx.font = '500 15px Outfit, sans-serif'
+    ctx.fillText('to open the Haldi invite', width / 2, height / 2 + 12)
   }, [])
 
   useEffect(() => {
@@ -151,10 +153,10 @@ export default function ScratchCard({ children, threshold = 0.35, onComplete }: 
       {(reduced || !done) && (
         <button
           type="button"
-          className="absolute bottom-4 right-4 z-20 rounded-full bg-white/90 px-4 py-2 text-[10px] tracking-[0.2em] uppercase text-maroon"
+          className="absolute bottom-4 left-4 right-4 z-20 rounded-full bg-white px-4 py-3 text-sm font-medium text-maroon shadow-sm"
           onClick={revealAll}
         >
-          Tap to reveal
+          Can’t rub? Tap here to open
         </button>
       )}
     </div>
