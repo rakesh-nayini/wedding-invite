@@ -103,6 +103,7 @@ export default function IntroGate({ open, onOpen, musicOn, onToggleMusic }: Intr
             <div className="mt-5">
               <MagneticButton
                 className="border border-[#f3d48a] bg-transparent px-10 py-3.5 text-sm tracking-[0.18em] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.55)]"
+                onPointerDown={onOpen}
                 onClick={onOpen}
               >
                 Open the invite

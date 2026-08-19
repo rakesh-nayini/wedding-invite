@@ -6,6 +6,7 @@ interface MagneticButtonProps {
   children: ReactNode
   className?: string
   onClick?: () => void
+  onPointerDown?: () => void
   type?: 'button' | 'submit'
 }
 
@@ -13,6 +14,7 @@ export default function MagneticButton({
   children,
   className = '',
   onClick,
+  onPointerDown,
   type = 'button',
 }: MagneticButtonProps) {
   const reduced = useReducedMotion()
@@ -25,6 +27,7 @@ export default function MagneticButton({
     <motion.button
       type={type}
       onClick={onClick}
+      onPointerDown={onPointerDown}
       className={`relative isolate overflow-hidden min-h-11 px-8 py-3 rounded-full font-sans tracking-[0.22em] uppercase text-xs md:text-sm foil-shine ${
         className || 'border border-gold/60 bg-white/80 text-maroon'
       }`}

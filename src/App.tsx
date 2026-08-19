@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import IntroGate from './sections/IntroGate'
 import OurStory from './sections/OurStory'
 import InvitationVideo from './sections/InvitationVideo'
@@ -16,32 +16,47 @@ import { useMusicPreference } from './hooks/useMusicPreference'
 import { InviteProvider, useInvite } from './hooks/useInvite'
 import { asset } from './utils/assets'
 
+const THEME_SRC = asset('assets/audio/theme.mp3')
+
 function Experience() {
   const { side } = useInvite()
   const [opened, setOpened] = useState(false)
   const { enabled: musicOn, toggle: toggleMusicPref, turnOn: turnMusicOn } = useMusicPreference()
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const openedRef = useRef(false)
   useLenis(opened)
   useScrollResponse(opened)
 
-  const getAudio = () => {
-    if (!audioRef.current) {
-      const audio = new Audio(asset('assets/audio/theme.mp3'))
-      audio.loop = true
-      audio.volume = 0.28
-      audioRef.current = audio
-    }
-    return audioRef.current
-  }
-
-  const playMusic = () => {
+  const playMusic = useCallback(() => {
     turnMusicOn()
-    void getAudio().play()
-  }
+    const el = audioRef.current
+    if (!el) return
+    el.muted = false
+    el.volume = 0.35
+    el.loop = true
+    const start = () => {
+      void el.play().catch(() => {
+        window.setTimeout(() => {
+          void el.play().catch(() => {})
+        }, 80)
+      })
+    }
+    if (el.readyState >= 2) start()
+    else el.addEventListener('canplay', start, { once: true })
+    start()
+  }, [turnMusicOn])
+
+  const openInvite = useCallback(() => {
+    playMusic()
+    if (openedRef.current) return
+    openedRef.current = true
+    setOpened(true)
+  }, [playMusic])
 
   const toggleMusic = () => {
+    const el = audioRef.current
     if (musicOn) {
-      getAudio().pause()
+      el?.pause()
       toggleMusicPref()
     } else {
       playMusic()
@@ -52,15 +67,9 @@ function Experience() {
     document.body.style.overflow = opened ? '' : 'hidden'
   }, [opened])
 
-  useEffect(() => {
-    return () => {
-      audioRef.current?.pause()
-      audioRef.current = null
-    }
-  }, [])
-
   return (
-    <div key={side} className="bg-[var(--paper)] text-[var(--ink)]">
+    <div className="bg-[var(--paper)] text-[var(--ink)]">
+      <audio ref={audioRef} src={THEME_SRC} loop playsInline preload="auto" className="hidden" />
       <CustomCursor />
       {opened && <ProgressBar />}
       <GlassNav visible={opened} />
@@ -73,16 +82,8 @@ function Experience() {
           Music {musicOn ? 'On' : 'Off'}
         </button>
       )}
-      <IntroGate
-        open={opened}
-        onOpen={() => {
-          playMusic()
-          setOpened(true)
-        }}
-        musicOn={musicOn}
-        onToggleMusic={toggleMusic}
-      />
-      <main>
+      <IntroGate open={opened} onOpen={openInvite} musicOn={musicOn} onToggleMusic={toggleMusic} />
+      <main key={side}>
         {opened && (
           <>
             <OurStory />
