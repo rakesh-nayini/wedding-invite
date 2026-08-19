@@ -1,0 +1,32 @@
+node_modules
+dist
+.DS_Store
+*.log
+.vite
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+.idea
+.vscode
+
+# Windows / Office lock files
+*.tmp
+*.~tmp
+~*
+
+# Huge originals — GitHub has a 100MB file limit.
+# The site uses the optimized copies in public/assets/.
+*.jpg.jpeg
+/slide*.jpeg
+/brideslide0.jpeg
+/grromslide0.jpeg
+/brideengagementplace.jpeg
+/groomengagementplace.jpeg
+/underwedding.jpeg
+/underrecepsection.jpeg
+/Asritha .mp4
+/Rakesh Reddy .mp4
+
+# Uncompressed copies in public (over GitHub's 100MB limit)
+/public/assets/video/asritha.mp4
+/public/assets/video/rakesh-reddy.mp4
+/public/assets/video/*.part.mp4
