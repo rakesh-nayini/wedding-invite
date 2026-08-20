@@ -27,7 +27,7 @@ function playThemeNow() {
   if (audio) {
     audio.muted = false
     audio.loop = true
-    if (audio.volume > 0.05) audio.volume = 0
+    if (audio.paused) audio.volume = 0
     void audio.play().catch(() => {})
   }
   window.inviteMusicStart?.()

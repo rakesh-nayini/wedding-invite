@@ -1,22 +1,33 @@
-import { useRef, useState } from 'react'
-import { asset } from '../utils/assets'
+import { useEffect, useRef, useState } from 'react'
+import { pageAsset } from '../utils/assets'
 import { useInvite } from '../hooks/useInvite'
 
-export default function InvitationVideo({ canPlay }: { canPlay: boolean }) {
+export default function InvitationVideo() {
   const { video } = useInvite()
   const [muted, setMuted] = useState(true)
   const [ratio, setRatio] = useState('9 / 16')
   const ref = useRef<HTMLVideoElement>(null)
-  const src = asset(video.src)
+  const src = pageAsset(video.src)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    el.muted = true
+    el.playsInline = true
+    el.loop = true
+    const play = () => {
+      void el.play().catch(() => {})
+    }
+    play()
+    el.addEventListener('canplay', play)
+    return () => el.removeEventListener('canplay', play)
+  }, [src])
 
   return (
-    <section
-      id="video"
-      className="relative overflow-hidden bg-[var(--beige)]/40 px-5 py-10 md:py-14"
-    >
+    <section id="video" className="relative overflow-hidden bg-[var(--beige)]/40 px-5 py-10 md:py-14">
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/20 blur-3xl" />
-      <p className="relative text-[10px] uppercase tracking-[0.4em] text-gold">A little film</p>
-      <h2 className="relative mt-2 max-w-sm text-center font-serif text-3xl text-[var(--ink)] md:text-4xl">
+      <p className="relative text-center text-[10px] uppercase tracking-[0.4em] text-gold">A little film</p>
+      <h2 className="relative mx-auto mt-2 max-w-sm text-center font-serif text-3xl text-[var(--ink)] md:text-4xl">
         A small glimpse, just for you
       </h2>
       <div
@@ -29,9 +40,10 @@ export default function InvitationVideo({ canPlay }: { canPlay: boolean }) {
           className="h-full w-full object-contain"
           src={src}
           muted={muted}
-          autoPlay={canPlay}
+          autoPlay
           playsInline
           loop
+          preload="auto"
           controls={false}
           onLoadedMetadata={(e) => {
             const el = e.currentTarget
@@ -44,8 +56,9 @@ export default function InvitationVideo({ canPlay }: { canPlay: boolean }) {
           type="button"
           className="absolute bottom-4 right-4 rounded-full bg-white/85 px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-maroon"
           onClick={() => {
-            setMuted((m) => !m)
-            if (ref.current) ref.current.muted = !muted
+            const next = !muted
+            setMuted(next)
+            if (ref.current) ref.current.muted = next
           }}
         >
           {muted ? 'Unmute' : 'Mute'}

@@ -5,6 +5,16 @@ export function asset(path: string): string {
   return `${BASE}${clean}`
 }
 
+/** Root-relative URL that stays correct on GitHub Pages with or without a trailing slash. */
+export function pageAsset(path: string): string {
+  const clean = path.startsWith('/') ? path.slice(1) : path
+  if (typeof window === 'undefined') return asset(clean)
+  let dir = window.location.pathname || '/'
+  if (/\.html?$/i.test(dir)) dir = dir.replace(/[^/]+$/, '')
+  if (!dir.endsWith('/')) dir += '/'
+  return `${dir}${clean}`
+}
+
 export function imageSrc(slug: string, width: 640 | 1080 | 1920 = 1080): string {
   return asset(`assets/images/${slug}-${width}.webp`)
 }

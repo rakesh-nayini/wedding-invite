@@ -21,14 +21,13 @@ function startMusic() {
 
 function Experience() {
   const { side } = useInvite()
-  const [scrolled, setScrolled] = useState(false)
+  const [begun, setBegun] = useState(false)
   const [musicPlaying, setMusicPlaying] = useState(false)
   const musicOnRef = useRef(true)
-  useScrollResponse(true)
+  useScrollResponse(begun)
 
-  const markScrolled = useCallback(() => {
-    startMusic()
-    setScrolled(true)
+  const onContinue = useCallback(() => {
+    setBegun(true)
   }, [])
 
   const toggleMusic = () => {
@@ -51,7 +50,6 @@ function Experience() {
     el.addEventListener('play', sync)
     el.addEventListener('playing', sync)
     el.addEventListener('pause', sync)
-    startMusic()
     return () => {
       el.removeEventListener('play', sync)
       el.removeEventListener('playing', sync)
@@ -59,22 +57,12 @@ function Experience() {
     }
   }, [])
 
-  useEffect(() => {
-    const onScroll = () => {
-      startMusic()
-      if (window.scrollY > 20) setScrolled(true)
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    onScroll()
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
   return (
     <div className="bg-[var(--paper)] text-[var(--ink)]">
       <CustomCursor />
-      {scrolled && <ProgressBar />}
-      <GlassNav visible={scrolled} />
-      {scrolled && (
+      {begun && <ProgressBar />}
+      <GlassNav visible={begun} />
+      {begun && (
         <button
           type="button"
           data-music-toggle
@@ -88,16 +76,16 @@ function Experience() {
         musicPlaying={musicPlaying}
         onToggleMusic={toggleMusic}
         onPrimeMusic={startMusic}
-        onContinue={markScrolled}
+        onContinue={onContinue}
       />
       <main key={side}>
         <OurStory />
         <Events />
-        <InvitationVideo canPlay={scrolled} />
+        <InvitationVideo />
         <WhenWhere />
         <FamilyTogether />
         <Footer />
-        {scrolled && (
+        {begun && (
           <>
             <InviteDrawer />
             <Blessings />
