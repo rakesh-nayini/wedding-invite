@@ -150,6 +150,7 @@ export function eventsFor(side: InviteSide) {
 export function introImagesFor(side: InviteSide) {
   return [
     { slug: side === 'bride' ? 'slide-0-bride' : 'slide-0-groom', alt: 'Opening' },
+    { slug: side === 'bride' ? 'slide-0b-bride' : 'slide-0b-groom', alt: 'Opening two' },
     { slug: 'slide-1', alt: 'Slide 1' },
     { slug: 'slide-2', alt: 'Slide 2' },
     { slug: 'slide-3', alt: 'Slide 3' },
