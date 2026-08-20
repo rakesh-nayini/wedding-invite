@@ -14,11 +14,10 @@ import Blessings from './components/Blessings'
 import { useLenis } from './hooks/useLenis'
 import { useScrollResponse } from './hooks/useScrollResponse'
 import { InviteProvider, useInvite } from './hooks/useInvite'
-const TARGET_VOLUME = 0.35
-const FADE_MS = 2500
 
-function inviteAudio() {
-  return (document.getElementById('invite-music') as HTMLAudioElement | null) ?? null
+function startMusic() {
+  window.__inviteMusicOff = false
+  window.inviteMusicStart?.()
 }
 
 function Experience() {
@@ -28,88 +27,45 @@ function Experience() {
   const [musicPlaying, setMusicPlaying] = useState(false)
   const openedRef = useRef(false)
   const musicOnRef = useRef(true)
-  const fadingRef = useRef(false)
-  const fadeRef = useRef<number | null>(null)
   useLenis(opened)
   useScrollResponse(opened)
-
-  const fadeUp = useCallback((el: HTMLAudioElement) => {
-    if (fadingRef.current) return
-    fadingRef.current = true
-    if (fadeRef.current) cancelAnimationFrame(fadeRef.current)
-    const from = el.volume
-    const start = performance.now()
-    const tick = (now: number) => {
-      if (!musicOnRef.current) {
-        fadingRef.current = false
-        return
-      }
-      const t = Math.min(1, (now - start) / FADE_MS)
-      el.volume = from + (TARGET_VOLUME - from) * t
-      if (t < 1) fadeRef.current = requestAnimationFrame(tick)
-      else fadingRef.current = false
-    }
-    fadeRef.current = requestAnimationFrame(tick)
-  }, [])
-
-  const startMusic = useCallback(() => {
-    if (!musicOnRef.current) return
-    const el = inviteAudio()
-    if (!el) return
-    window.__inviteMusicOff = false
-    el.loop = true
-    el.muted = false
-    if (el.paused) {
-      if (el.volume > 0.04) el.volume = 0
-      const play = el.play()
-      if (play) void play.then(() => fadeUp(el)).catch(() => {})
-      return
-    }
-    if (el.volume < TARGET_VOLUME * 0.9) fadeUp(el)
-  }, [fadeUp])
 
   const openInvite = useCallback(() => {
     startMusic()
     if (openedRef.current) return
     openedRef.current = true
     setOpened(true)
-  }, [startMusic])
+  }, [])
 
   const toggleMusic = () => {
-    const el = inviteAudio()
+    const el = document.getElementById('invite-music') as HTMLAudioElement | null
     const playing = Boolean(el && !el.paused)
     if (playing) {
       musicOnRef.current = false
-      window.__inviteMusicOff = true
-      if (fadeRef.current) cancelAnimationFrame(fadeRef.current)
-      fadingRef.current = false
-      el?.pause()
+      window.inviteMusicStop?.()
       setMusicOn(false)
       setMusicPlaying(false)
       return
     }
     musicOnRef.current = true
-    window.__inviteMusicOff = false
     setMusicOn(true)
-    if (el && el.volume > 0.04) el.volume = 0
     startMusic()
   }
 
   useEffect(() => {
-    const el = inviteAudio()
+    const el = document.getElementById('invite-music') as HTMLAudioElement | null
     if (!el) return
-    el.loop = true
-    el.muted = false
     const sync = () => setMusicPlaying(!el.paused && musicOnRef.current)
     el.addEventListener('play', sync)
+    el.addEventListener('playing', sync)
     el.addEventListener('pause', sync)
     startMusic()
     return () => {
       el.removeEventListener('play', sync)
+      el.removeEventListener('playing', sync)
       el.removeEventListener('pause', sync)
-      if (fadeRef.current) cancelAnimationFrame(fadeRef.current)
     }
-  }, [startMusic])
+  }, [])
 
   useEffect(() => {
     document.body.style.overflow = opened ? '' : 'hidden'

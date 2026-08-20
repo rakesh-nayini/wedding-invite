@@ -2,6 +2,9 @@
 
 interface Window {
   __inviteMusicOff?: boolean
+  inviteMusicStart?: () => boolean
+  inviteMusicStop?: () => void
+  webkitAudioContext?: typeof AudioContext
 }
 
 declare module 'canvas-confetti' {
