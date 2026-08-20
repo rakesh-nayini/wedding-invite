@@ -27,28 +27,28 @@ export const VENUES = {
     label: 'Haldi',
     when: 'Tuesday, 25 August · 5:00 PM',
     address: 'Gudikandhula, Siddipet',
-    mapsUrl: 'https://maps.google.com/?q=Gudikandhula+Siddipet',
+    mapsUrl: 'https://maps.app.goo.gl/npVgbeCLmuPMciJN9?g_st=ac',
   },
   gajwel: {
     name: 'Gajwel',
     label: 'Haldi',
     when: 'Tuesday, 25 August · 4:00 PM',
     address: 'Gajwel, Telangana',
-    mapsUrl: 'https://maps.google.com/?q=Gajwel+Telangana',
+    mapsUrl: 'https://maps.app.goo.gl/L1LwdfKDJLFE3jrh7?g_st=ac',
   },
   siddipet: {
     name: 'Padmanayaka Gardens',
     label: 'Wedding',
     when: 'Thursday, 27 August · 11:20 AM',
     address: 'Siddipet, Telangana',
-    mapsUrl: 'https://maps.google.com/?q=Padmanayaka+Gardens+Siddipet',
+    mapsUrl: 'https://maps.app.goo.gl/URyDw2uuVgPUronv7?g_st=ac',
   },
   reception: {
     name: 'S Convention Hall',
     label: 'Reception',
     when: 'Sunday, 30 August · 6:30 PM',
     address: 'Gajwel, Telangana',
-    mapsUrl: 'https://maps.google.com/?q=Convention+Hall+Gajwel',
+    mapsUrl: 'https://maps.app.goo.gl/LM6dectcE6dkGxUJ6?g_st=ac',
   },
 }
 
