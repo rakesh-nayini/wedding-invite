@@ -27,6 +27,7 @@ const IMAGE_MAP = {
   'slide2.jpeg': 'slide-2',
   'slide3.jpeg': 'slide-3',
   'slide4.jpeg': 'slide-4',
+  'slide5.jpeg': 'slide-5',
   'brideslide0.jpeg': 'slide-0-bride',
   'brideslide0.1.jpeg': 'slide-0b-bride',
   'grromslide0.jpeg': 'slide-0-groom',

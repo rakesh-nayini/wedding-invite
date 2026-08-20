@@ -155,6 +155,7 @@ export function introImagesFor(side: InviteSide) {
     { slug: 'slide-2', alt: 'Slide 2' },
     { slug: 'slide-3', alt: 'Slide 3' },
     { slug: 'slide-4', alt: 'Slide 4' },
+    { slug: 'slide-5', alt: 'Slide 5' },
   ]
 }
 

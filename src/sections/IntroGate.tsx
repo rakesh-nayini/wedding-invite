@@ -19,6 +19,8 @@ const PANS = [
   { initial: { scale: 1, x: 0, y: 0 }, animate: { scale: 1.05, x: 0, y: -6 } },
   { initial: { scale: 1, x: 0, y: 0 }, animate: { scale: 1.04, x: 8, y: 2 } },
   { initial: { scale: 1, x: 0, y: 0 }, animate: { scale: 1.045, x: -4, y: -4 } },
+  { initial: { scale: 1, x: 0, y: 0 }, animate: { scale: 1.038, x: 4, y: 6 } },
+  { initial: { scale: 1, x: 0, y: 0 }, animate: { scale: 1.042, x: -6, y: 0 } },
 ]
 
 function playThemeNow() {
