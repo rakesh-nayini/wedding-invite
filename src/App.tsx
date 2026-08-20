@@ -22,9 +22,25 @@ function startMusic() {
 function Experience() {
   const { side } = useInvite()
   const [begun, setBegun] = useState(false)
+  const [atEvents, setAtEvents] = useState(false)
   const [musicPlaying, setMusicPlaying] = useState(false)
   const musicOnRef = useRef(true)
   useScrollResponse(begun)
+
+  useEffect(() => {
+    const el = document.getElementById('events')
+    if (!el) return
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return
+        setAtEvents(true)
+        io.disconnect()
+      },
+      { threshold: 0.12 },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [side])
 
   const onContinue = useCallback(() => {
     setBegun(true)
@@ -80,7 +96,7 @@ function Experience() {
         <WhenWhere />
         <FamilyTogether />
         <Footer />
-        {begun && (
+        {atEvents && (
           <>
             <InviteDrawer />
             <Blessings />
