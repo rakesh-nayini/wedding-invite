@@ -1,6 +1,6 @@
 ;(function () {
-  var TARGET = 0.35
-  var FADE_MS = 2500
+  var TARGET = 0.4
+  var FADE_MS = 1200
   var audio = document.getElementById('invite-music')
   if (!audio) return
 
@@ -20,16 +20,19 @@
   audio.volume = 0
   audio.setAttribute('playsinline', 'true')
   audio.setAttribute('webkit-playsinline', 'true')
-  audio.src = themeUrl()
-  audio.load()
+  if (!audio.getAttribute('src')) audio.src = themeUrl()
+  try {
+    audio.load()
+  } catch (e) {}
 
   function fadeUp() {
-    if (fading || window.__inviteMusicOff || audio.paused) return
+    if (fading || window.__inviteMusicOff) return
     fading = true
-    var from = audio.volume
+    var from = Math.max(audio.volume, 0.08)
+    audio.volume = from
     var startAt = performance.now()
     function tick(now) {
-      if (window.__inviteMusicOff || audio.paused) {
+      if (window.__inviteMusicOff) {
         fading = false
         return
       }
@@ -42,13 +45,17 @@
   }
 
   function start() {
-    if (window.__inviteMusicOff) return false
+    window.__inviteMusicOff = false
     audio.muted = false
     audio.loop = true
-    if (audio.paused && audio.volume > 0.05) audio.volume = 0
+    if (!audio.src) audio.src = themeUrl()
+    if (audio.paused) audio.volume = 0.08
     var play = audio.play()
-    if (play && play.then) play.then(fadeUp).catch(function () {})
-    else fadeUp()
+    if (play && play.then) {
+      play.then(fadeUp).catch(function () {})
+    } else {
+      fadeUp()
+    }
     return true
   }
 
