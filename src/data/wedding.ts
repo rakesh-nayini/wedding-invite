@@ -289,7 +289,7 @@ export const FAMILY_PAGES: Record<InviteSide, FamilyPage> = {
     ],
     littleOnes: {
       names: 'Vihaan · Arnika · Arshik',
-      note: 'Vihaan, just forty-five days new, already our littlest guest of honour — with Arnika & Arshik beside him.',
+      note: "Vihaan, the new joy we waited for — here in time for Babai's wedding. Arnika and Arshik crossed the seas to stay with us, and to help Mama find his pose.",
     },
     thanks:
       "With special thanks to every Nayini family member, and our cousin brothers, for standing with us in this joy.",
