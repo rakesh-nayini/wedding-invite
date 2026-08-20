@@ -9,7 +9,9 @@ interface IntroGateProps {
   open: boolean
   onOpen: () => void
   musicOn: boolean
+  musicPlaying: boolean
   onToggleMusic: () => void
+  onPrimeMusic: () => void
 }
 
 const HOLD_MS = 2000
@@ -21,7 +23,7 @@ const PANS = [
   { initial: { scale: 1, x: 0, y: 0 }, animate: { scale: 1.045, x: -4, y: -4 } },
 ]
 
-export default function IntroGate({ open, onOpen, musicOn, onToggleMusic }: IntroGateProps) {
+export default function IntroGate({ open, onOpen, musicOn, musicPlaying, onToggleMusic, onPrimeMusic }: IntroGateProps) {
   const { firstName, secondName, familyLine, side } = useInvite()
   const reduced = useReducedMotion()
   const slides = introImagesFor(side)
@@ -74,7 +76,9 @@ export default function IntroGate({ open, onOpen, musicOn, onToggleMusic }: Intr
           className="fixed inset-0 z-[60] overflow-hidden bg-black"
           exit={{ opacity: 0 }}
           transition={{ duration: 0.45 }}
+          onPointerDown={onPrimeMusic}
           onTouchStart={(e) => {
+            onPrimeMusic()
             touchY.current = e.touches[0]?.clientY ?? null
           }}
           onTouchEnd={(e) => {
@@ -114,10 +118,11 @@ export default function IntroGate({ open, onOpen, musicOn, onToggleMusic }: Intr
 
           <button
             type="button"
+            data-music-toggle
             onClick={onToggleMusic}
             className="absolute right-4 top-4 z-20 rounded-full border border-white/50 bg-white/80 px-3 py-2 text-[10px] uppercase tracking-[0.22em] text-maroon"
           >
-            Music {musicOn ? 'On' : 'Off'}
+            {musicPlaying ? 'Music On' : musicOn ? 'Tap for music' : 'Music Off'}
           </button>
 
           <div className="absolute inset-x-0 bottom-0 z-10 px-5 pb-[max(1.4rem,env(safe-area-inset-bottom))] pt-24 text-center">

@@ -24,6 +24,7 @@ function Experience() {
   const { side } = useInvite()
   const [opened, setOpened] = useState(false)
   const [musicOn, setMusicOn] = useState(true)
+  const [musicPlaying, setMusicPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const openedRef = useRef(false)
   const musicOnRef = useRef(true)
@@ -33,7 +34,6 @@ function Experience() {
   useScrollResponse(opened)
 
   const fadeUp = useCallback((el: HTMLAudioElement) => {
-    if (el.muted) return
     if (fadingRef.current) return
     fadingRef.current = true
     if (fadeRef.current) cancelAnimationFrame(fadeRef.current)
@@ -52,68 +52,46 @@ function Experience() {
     fadeRef.current = requestAnimationFrame(tick)
   }, [])
 
-  const ensurePlaying = useCallback(() => {
+  const startMusic = useCallback(() => {
     if (!musicOnRef.current) return
     const el = audioRef.current
     if (!el) return
     el.loop = true
-    const afterPlay = () => {
-      el.muted = false
-      fadeUp(el)
-    }
-    if (!el.paused) {
-      afterPlay()
+    el.muted = false
+    if (el.paused) {
+      if (el.volume > 0.04) el.volume = 0
+      const play = el.play()
+      if (play) {
+        void play.then(() => fadeUp(el)).catch(() => {})
+      }
       return
     }
-    el.volume = 0
-    void el
-      .play()
-      .then(afterPlay)
-      .catch(() => {
-        el.muted = true
-        void el
-          .play()
-          .then(() => {
-            el.muted = false
-            fadeUp(el)
-          })
-          .catch(() => {})
-      })
+    fadeUp(el)
   }, [fadeUp])
 
-  const unlockAudio = useCallback(() => {
-    if (!musicOnRef.current) return
-    const el = audioRef.current
-    if (!el) return
-    el.muted = false
-    if (el.volume < 0.02) el.volume = 0
-    ensurePlaying()
-  }, [ensurePlaying])
-
   const openInvite = useCallback(() => {
-    unlockAudio()
+    startMusic()
     if (openedRef.current) return
     openedRef.current = true
     setOpened(true)
-  }, [unlockAudio])
+  }, [startMusic])
 
   const toggleMusic = () => {
     const el = audioRef.current
-    if (musicOnRef.current) {
+    const playing = Boolean(el && !el.paused)
+    if (playing) {
       musicOnRef.current = false
       if (fadeRef.current) cancelAnimationFrame(fadeRef.current)
       fadingRef.current = false
       el?.pause()
       setMusicOn(false)
-    } else {
-      musicOnRef.current = true
-      setMusicOn(true)
-      if (el) {
-        el.muted = false
-        if (el.volume < 0.05) el.volume = 0
-      }
-      ensurePlaying()
+      setMusicPlaying(false)
+      return
     }
+    musicOnRef.current = true
+    setMusicOn(true)
+    if (el && el.volume > 0.04) el.volume = 0
+    startMusic()
   }
 
   useEffect(() => {
@@ -124,23 +102,24 @@ function Experience() {
     el.muted = false
     el.setAttribute('playsinline', 'true')
     el.setAttribute('webkit-playsinline', 'true')
-    const kick = () => ensurePlaying()
-    kick()
-    el.addEventListener('canplay', kick)
-    el.addEventListener('canplaythrough', kick)
-    const events: Array<keyof WindowEventMap> = ['pointerdown', 'touchstart', 'keydown', 'click']
-    events.forEach((name) => window.addEventListener(name, unlockAudio, { capture: true }))
-    const poll = window.setInterval(() => {
-      if (musicOnRef.current && el.paused) kick()
-    }, 800)
+    const sync = () => setMusicPlaying(!el.paused && musicOnRef.current)
+    el.addEventListener('play', sync)
+    el.addEventListener('pause', sync)
+    startMusic()
+    const onGesture = (e: Event) => {
+      const target = e.target as HTMLElement | null
+      if (target?.closest('[data-music-toggle]')) return
+      startMusic()
+    }
+    const events: Array<keyof WindowEventMap> = ['pointerdown', 'touchstart', 'keydown']
+    events.forEach((name) => window.addEventListener(name, onGesture, { capture: true }))
     return () => {
-      el.removeEventListener('canplay', kick)
-      el.removeEventListener('canplaythrough', kick)
-      events.forEach((name) => window.removeEventListener(name, unlockAudio, { capture: true } as EventListenerOptions))
-      window.clearInterval(poll)
+      el.removeEventListener('play', sync)
+      el.removeEventListener('pause', sync)
+      events.forEach((name) => window.removeEventListener(name, onGesture, { capture: true } as EventListenerOptions))
       if (fadeRef.current) cancelAnimationFrame(fadeRef.current)
     }
-  }, [ensurePlaying, unlockAudio])
+  }, [startMusic])
 
   useEffect(() => {
     document.body.style.overflow = opened ? '' : 'hidden'
@@ -152,9 +131,9 @@ function Experience() {
         ref={audioRef}
         src={THEME_SRC}
         loop
-        autoPlay
-        playsInline
-        preload="auto"
+          autoPlay={false}
+          playsInline
+          preload="auto"
         className="hidden"
       />
       <CustomCursor />
@@ -163,13 +142,21 @@ function Experience() {
       {opened && (
         <button
           type="button"
+          data-music-toggle
           onClick={toggleMusic}
           className="fixed left-4 top-4 z-40 rounded-full border border-gold/40 bg-white/80 px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-maroon md:left-6"
         >
-          Music {musicOn ? 'On' : 'Off'}
+          {musicPlaying ? 'Music On' : musicOn ? 'Tap for music' : 'Music Off'}
         </button>
       )}
-      <IntroGate open={opened} onOpen={openInvite} musicOn={musicOn} onToggleMusic={toggleMusic} />
+      <IntroGate
+        open={opened}
+        onOpen={openInvite}
+        musicPlaying={musicPlaying}
+        musicOn={musicOn}
+        onToggleMusic={toggleMusic}
+        onPrimeMusic={startMusic}
+      />
       <main key={side}>
         {opened && (
           <>
