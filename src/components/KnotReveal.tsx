@@ -23,8 +23,8 @@ export default function KnotReveal({
       <button
         type="button"
         onClick={tie}
-        className={`relative flex min-h-64 w-full flex-col items-center justify-center overflow-hidden rounded-[2rem] border-2 px-4 pb-5 pt-6 ${
-          tied ? 'border-gold/30 bg-[#fffaf4]' : 'tap-glow border-[#c9a962] bg-[#fff6e8]'
+        className={`relative flex min-h-56 w-full flex-col items-center justify-center overflow-hidden rounded-[2rem] border px-4 pb-5 pt-6 ${
+          tied ? 'border-gold/25 bg-[#fffaf4]' : 'border-gold/70 bg-white shadow-[0_12px_28px_rgba(92,26,26,0.08)]'
         }`}
       >
         <svg viewBox="0 0 320 140" className="h-28 w-full px-8" aria-hidden>
@@ -55,8 +55,8 @@ export default function KnotReveal({
           />
         </svg>
         {!tied && (
-          <span className="mt-2 inline-flex min-h-12 items-center rounded-full bg-[#f3d48a] px-6 py-3 font-serif text-lg text-[#5c1c1c] shadow-[0_8px_20px_rgba(0,0,0,0.12)]">
-            Tap to tie the knot
+          <span className="mt-1 rounded-full bg-[#f3d48a] px-6 py-2.5 font-serif text-base text-[#5c1c1c]">
+            Tie the knot
           </span>
         )}
       </button>
