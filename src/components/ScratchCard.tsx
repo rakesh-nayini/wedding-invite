@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import confetti from 'canvas-confetti'
-import { useReducedMotion } from '../hooks/useMediaQuery'
 import InviteFrame from './InviteFrame'
 
 interface ScratchCardProps {
@@ -12,7 +11,6 @@ interface ScratchCardProps {
 export default function ScratchCard({ children, threshold = 0.35, onComplete }: ScratchCardProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const wrapRef = useRef<HTMLDivElement>(null)
-  const reduced = useReducedMotion()
   const [done, setDone] = useState(false)
   const scratching = useRef(false)
   const coverLocked = useRef(false)
@@ -159,22 +157,13 @@ export default function ScratchCard({ children, threshold = 0.35, onComplete }: 
             onPointerLeave={onPointerUp}
           />
         )}
-        {reduced && !done && (
+        {!done && (
           <button
             type="button"
-            className="absolute bottom-4 left-4 right-4 z-20 rounded-full bg-white/90 px-4 py-3 font-serif italic text-maroon"
+            className="tap-glow absolute bottom-4 left-4 right-4 z-20 rounded-full bg-[#f3d48a] px-4 py-3 font-serif text-base text-[#5c1c1c]"
             onClick={revealAll}
           >
             Tap to open
-          </button>
-        )}
-        {!reduced && !done && (
-          <button
-            type="button"
-            className="absolute bottom-3 left-0 right-0 z-20 font-serif italic text-sm text-[#5c1c1c]/75"
-            onClick={revealAll}
-          >
-            Or tap to open
           </button>
         )}
       </div>

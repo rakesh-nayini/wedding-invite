@@ -51,7 +51,7 @@ export default function Events({ onPlayedEvent }: { onPlayedEvent: () => void })
       <p className="text-center text-[10px] uppercase tracking-[0.4em] text-gold">The celebrations</p>
       <h2 className="mt-2 text-center font-serif text-3xl text-[var(--ink)]">Haldi · Wedding · Reception</h2>
       <p className="mx-auto mt-3 max-w-sm text-center text-[15px] leading-relaxed text-[var(--ink)]/80">
-        Three blessings, waiting to be opened.
+        Three blessings. Tap each gold button to open the date.
       </p>
 
       <div className="mx-auto mt-8 max-w-md space-y-12">

@@ -52,6 +52,11 @@ export default function KnotReveal({
             transition={{ duration: 0.7 }}
           />
         </svg>
+        {!tied && (
+          <span className="mt-4 inline-block rounded-full bg-[#f3d48a] px-5 py-2.5 font-serif text-[15px] text-[#5c1c1c]">
+            Tap here to tie the knot
+          </span>
+        )}
       </button>
 
       <AnimatePresence>
