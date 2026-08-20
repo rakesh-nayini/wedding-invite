@@ -14,68 +14,14 @@
     />
     <link rel="preload" as="image" href="./assets/images/hero-1080.jpg" />
     <title>Asritha & Rakesh Reddy | Wedding Invitation</title>
-    <script type="module" crossorigin src="./assets/index-DKIl74f4.js"></script>
+    <script type="module" crossorigin src="./assets/index-BGJhvBWz.js"></script>
     <link rel="modulepreload" crossorigin href="./assets/motion-Cra9Uyn6.js">
     <link rel="modulepreload" crossorigin href="./assets/gsap-CzGW6FVa.js">
     <link rel="stylesheet" crossorigin href="./assets/index-pgEsqaRB.css">
   </head>
   <body>
-    <audio
-      id="invite-music"
-      src="./assets/audio/theme.mp3"
-      loop
-      playsinline
-      webkit-playsinline
-      preload="auto"
-    ></audio>
-    <script>
-      (function () {
-        var audio = document.getElementById('invite-music')
-        if (!audio) return
-        window.__inviteMusicOff = false
-        audio.muted = false
-        audio.volume = 0
-        audio.loop = true
-        var target = 0.35
-        var fadeMs = 2500
-        var fading = false
-        function fadeUp() {
-          if (fading || window.__inviteMusicOff) return
-          fading = true
-          var from = audio.volume
-          var start = performance.now()
-          function tick(now) {
-            if (window.__inviteMusicOff || audio.paused) {
-              fading = false
-              return
-            }
-            var t = Math.min(1, (now - start) / fadeMs)
-            audio.volume = from + (target - from) * t
-            if (t < 1) requestAnimationFrame(tick)
-            else fading = false
-          }
-          requestAnimationFrame(tick)
-        }
-        function start() {
-          if (window.__inviteMusicOff) return
-          audio.muted = false
-          var play = audio.play()
-          if (play && play.then) {
-            play.then(fadeUp).catch(function () {
-              window.setTimeout(start, 350)
-            })
-          } else {
-            fadeUp()
-          }
-        }
-        audio.addEventListener('canplay', start)
-        audio.addEventListener('loadeddata', start)
-        start()
-        window.setInterval(function () {
-          if (!window.__inviteMusicOff && audio.paused) start()
-        }, 600)
-      })()
-    </script>
+    <audio id="invite-music" loop playsinline webkit-playsinline preload="auto"></audio>
+    <script src="./invite-music.js"></script>
     <div id="root"></div>
   </body>
 </html>
