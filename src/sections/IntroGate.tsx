@@ -34,14 +34,9 @@ export default function IntroGate({ onPrimeMusic, onContinue }: IntroGateProps) 
   }, [side])
 
   useEffect(() => {
-    let step = 0
+    if (slides.length < 2) return
     const id = window.setInterval(() => {
-      step += 1
-      if (step >= slides.length) {
-        window.clearInterval(id)
-        return
-      }
-      setIndex(step)
+      setIndex((i) => (i + 1) % slides.length)
     }, HOLD_MS)
     return () => window.clearInterval(id)
   }, [slides.length, side])
