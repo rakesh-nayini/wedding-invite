@@ -14,18 +14,18 @@ import Blessings from './components/Blessings'
 import { useLenis } from './hooks/useLenis'
 import { useScrollResponse } from './hooks/useScrollResponse'
 import { InviteProvider, useInvite } from './hooks/useInvite'
-import { asset } from './utils/assets'
-
-const THEME_SRC = asset('assets/audio/theme.mp3')
 const TARGET_VOLUME = 0.35
-const FADE_MS = 2000
+const FADE_MS = 2500
+
+function inviteAudio() {
+  return (document.getElementById('invite-music') as HTMLAudioElement | null) ?? null
+}
 
 function Experience() {
   const { side } = useInvite()
   const [opened, setOpened] = useState(false)
   const [musicOn, setMusicOn] = useState(true)
   const [musicPlaying, setMusicPlaying] = useState(false)
-  const audioRef = useRef<HTMLAudioElement | null>(null)
   const openedRef = useRef(false)
   const musicOnRef = useRef(true)
   const fadingRef = useRef(false)
@@ -54,19 +54,18 @@ function Experience() {
 
   const startMusic = useCallback(() => {
     if (!musicOnRef.current) return
-    const el = audioRef.current
+    const el = inviteAudio()
     if (!el) return
+    window.__inviteMusicOff = false
     el.loop = true
     el.muted = false
     if (el.paused) {
       if (el.volume > 0.04) el.volume = 0
       const play = el.play()
-      if (play) {
-        void play.then(() => fadeUp(el)).catch(() => {})
-      }
+      if (play) void play.then(() => fadeUp(el)).catch(() => {})
       return
     }
-    fadeUp(el)
+    if (el.volume < TARGET_VOLUME * 0.9) fadeUp(el)
   }, [fadeUp])
 
   const openInvite = useCallback(() => {
@@ -77,10 +76,11 @@ function Experience() {
   }, [startMusic])
 
   const toggleMusic = () => {
-    const el = audioRef.current
+    const el = inviteAudio()
     const playing = Boolean(el && !el.paused)
     if (playing) {
       musicOnRef.current = false
+      window.__inviteMusicOff = true
       if (fadeRef.current) cancelAnimationFrame(fadeRef.current)
       fadingRef.current = false
       el?.pause()
@@ -89,34 +89,24 @@ function Experience() {
       return
     }
     musicOnRef.current = true
+    window.__inviteMusicOff = false
     setMusicOn(true)
     if (el && el.volume > 0.04) el.volume = 0
     startMusic()
   }
 
   useEffect(() => {
-    const el = audioRef.current
+    const el = inviteAudio()
     if (!el) return
-    el.volume = 0
     el.loop = true
     el.muted = false
-    el.setAttribute('playsinline', 'true')
-    el.setAttribute('webkit-playsinline', 'true')
     const sync = () => setMusicPlaying(!el.paused && musicOnRef.current)
     el.addEventListener('play', sync)
     el.addEventListener('pause', sync)
     startMusic()
-    const onGesture = (e: Event) => {
-      const target = e.target as HTMLElement | null
-      if (target?.closest('[data-music-toggle]')) return
-      startMusic()
-    }
-    const events: Array<keyof WindowEventMap> = ['pointerdown', 'touchstart', 'keydown']
-    events.forEach((name) => window.addEventListener(name, onGesture, { capture: true }))
     return () => {
       el.removeEventListener('play', sync)
       el.removeEventListener('pause', sync)
-      events.forEach((name) => window.removeEventListener(name, onGesture, { capture: true } as EventListenerOptions))
       if (fadeRef.current) cancelAnimationFrame(fadeRef.current)
     }
   }, [startMusic])
@@ -127,15 +117,6 @@ function Experience() {
 
   return (
     <div className="bg-[var(--paper)] text-[var(--ink)]">
-      <audio
-        ref={audioRef}
-        src={THEME_SRC}
-        loop
-          autoPlay={false}
-          playsInline
-          preload="auto"
-        className="hidden"
-      />
       <CustomCursor />
       {opened && <ProgressBar />}
       <GlassNav visible={opened} />
@@ -146,7 +127,7 @@ function Experience() {
           onClick={toggleMusic}
           className="fixed left-4 top-4 z-40 rounded-full border border-gold/40 bg-white/80 px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-maroon md:left-6"
         >
-          {musicPlaying ? 'Music On' : musicOn ? 'Tap for music' : 'Music Off'}
+          {musicPlaying ? 'Music On' : 'Music Off'}
         </button>
       )}
       <IntroGate

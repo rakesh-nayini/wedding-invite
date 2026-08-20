@@ -1,5 +1,9 @@
 /// <reference types="vite/client" />
 
+interface Window {
+  __inviteMusicOff?: boolean
+}
+
 declare module 'canvas-confetti' {
   interface Options {
     particleCount?: number
