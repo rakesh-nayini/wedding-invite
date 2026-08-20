@@ -19,8 +19,10 @@ export function imageSrc(slug: string, width: 640 | 1080 | 1920 = 1080): string 
   return asset(`assets/images/${slug}-${width}.webp`)
 }
 
+const IMAGE_VERSION = '20260820c'
+
 export function imageSrcFallback(slug: string, width: 640 | 1080 | 1920 = 1080): string {
-  return asset(`assets/images/${slug}-${width}.jpg`)
+  return `${pageAsset(`assets/images/${slug}-${width}.jpg`)}?v=${IMAGE_VERSION}`
 }
 
 export function pictureSources(

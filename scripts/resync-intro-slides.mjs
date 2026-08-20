@@ -29,7 +29,7 @@ for (const [src, slug] of jobs) {
     await sharp(input)
       .rotate()
       .resize({ width, withoutEnlargement: true })
-      .jpeg({ quality: width <= 640 ? 75 : 82, mozjpeg: true })
+      .jpeg({ quality: width <= 640 ? 76 : 83, mozjpeg: true })
       .toFile(jpegOut)
     console.log('ok', `${slug}-${width}`)
   }
