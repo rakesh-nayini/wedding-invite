@@ -6,12 +6,25 @@ import LanternReveal from '../components/LanternReveal'
 import ToastReveal from '../components/ToastReveal'
 import InviteNote from '../components/InviteNote'
 import { useInvite } from '../hooks/useInvite'
+import { track, type MetricKey } from '../lib/metrics'
 
-function Reveal({ event }: { event: WeddingEvent }) {
+function Reveal({
+  event,
+  onPlayedEvent,
+}: {
+  event: WeddingEvent
+  onPlayedEvent: () => void
+}) {
+  const { side } = useInvite()
+  const done = (metric: MetricKey) => {
+    track(side, metric)
+    onPlayedEvent()
+  }
+
   switch (event.revealType) {
     case 'scratch':
       return (
-        <ScratchCard>
+        <ScratchCard onComplete={() => done('scratch')}>
           <div className="h-full bg-gradient-to-b from-[#fff8e7] to-[#f6e2a8]">
             <InviteNote event={event} />
           </div>
@@ -20,15 +33,17 @@ function Reveal({ event }: { event: WeddingEvent }) {
     case 'envelope':
       return <EnvelopeReveal event={event} />
     case 'knot':
-      return <KnotReveal event={event} />
+      return <KnotReveal event={event} onComplete={() => done('knot')} />
     case 'lantern':
       return <LanternReveal event={event} />
     case 'toast':
-      return <ToastReveal event={event} />
+      return <ToastReveal event={event} onComplete={() => done('toast')} />
+    default:
+      return null
   }
 }
 
-export default function Events() {
+export default function Events({ onPlayedEvent }: { onPlayedEvent: () => void }) {
   const { events } = useInvite()
 
   return (
@@ -44,7 +59,7 @@ export default function Events() {
           <div key={event.id}>
             <h3 className="mb-1 text-center font-serif text-2xl text-[var(--ink)]">{event.title}</h3>
             <p className="mb-4 text-center text-[15px] leading-snug text-maroon">{event.whisper}</p>
-            <Reveal event={event} />
+            <Reveal event={event} onPlayedEvent={onPlayedEvent} />
           </div>
         ))}
       </div>

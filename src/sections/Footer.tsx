@@ -5,7 +5,7 @@ import { useInvite } from '../hooks/useInvite'
 export default function Footer() {
   const { firstName, secondName } = useInvite()
   return (
-    <footer className="border-t border-gold/20 bg-[var(--paper)] px-6 py-16 text-center">
+    <footer id="end" className="border-t border-gold/20 bg-[var(--paper)] px-6 py-16 text-center">
       <Monogram className="mx-auto" size={80} />
       <p className="mt-5 font-serif text-2xl text-[var(--ink)]">
         {firstName} <span className="text-gold">&</span> {secondName}

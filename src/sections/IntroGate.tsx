@@ -46,10 +46,16 @@ export default function IntroGate({ onPrimeMusic, onContinue }: IntroGateProps) 
 
   const begin = () => {
     onPrimeMusic()
-    if (begunRef.current) return
+    if (begunRef.current) {
+      document.getElementById('story')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      return
+    }
     begunRef.current = true
     onContinue()
     setBegun(true)
+    window.setTimeout(() => {
+      document.getElementById('story')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 60)
   }
 
   const continueDown = () => {

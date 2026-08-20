@@ -12,7 +12,10 @@ import GlassNav from './components/GlassNav'
 import InviteDrawer from './components/InviteDrawer'
 import Blessings from './components/Blessings'
 import { useScrollResponse } from './hooks/useScrollResponse'
+import { useInviteMetrics } from './hooks/useInviteMetrics'
 import { InviteProvider, useInvite } from './hooks/useInvite'
+import { isMetricsInvite, track } from './lib/metrics'
+import MetricsPage from './sections/MetricsPage'
 
 function startMusic() {
   window.__inviteMusicOff = false
@@ -23,9 +26,11 @@ function Experience() {
   const { side } = useInvite()
   const [begun, setBegun] = useState(false)
   const [atEvents, setAtEvents] = useState(false)
+  const [playedEvent, setPlayedEvent] = useState(false)
   const [musicPlaying, setMusicPlaying] = useState(false)
   const musicOnRef = useRef(true)
   useScrollResponse(begun)
+  useInviteMetrics(side, begun, playedEvent)
 
   useEffect(() => {
     const el = document.getElementById('events')
@@ -43,7 +48,12 @@ function Experience() {
   }, [side])
 
   const onContinue = useCallback(() => {
+    track(side, 'open')
     setBegun(true)
+  }, [side])
+
+  const onPlayedEvent = useCallback(() => {
+    setPlayedEvent(true)
   }, [])
 
   const toggleMusic = () => {
@@ -91,7 +101,7 @@ function Experience() {
       <IntroGate onPrimeMusic={startMusic} onContinue={onContinue} />
       <main key={side}>
         <OurStory />
-        <Events />
+        <Events onPlayedEvent={onPlayedEvent} />
         <InvitationVideo />
         <WhenWhere />
         <FamilyTogether />
@@ -108,6 +118,7 @@ function Experience() {
 }
 
 export default function App() {
+  if (isMetricsInvite()) return <MetricsPage />
   return (
     <InviteProvider>
       <Experience />

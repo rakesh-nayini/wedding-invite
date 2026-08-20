@@ -7,24 +7,50 @@ export default function InvitationVideo() {
   const [muted, setMuted] = useState(true)
   const [ratio, setRatio] = useState('9 / 16')
   const ref = useRef<HTMLVideoElement>(null)
+  const sectionRef = useRef<HTMLElement>(null)
   const src = pageAsset(video.src)
 
   useEffect(() => {
     const el = ref.current
-    if (!el) return
+    const section = sectionRef.current
+    if (!el || !section) return
     el.muted = true
     el.playsInline = true
     el.loop = true
-    const play = () => {
-      void el.play().catch(() => {})
+    el.pause()
+
+    const loadIo = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) el.preload = 'auto'
+      },
+      { rootMargin: '280px 0px' },
+    )
+    const playIo = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.28) {
+          el.muted = true
+          void el.play().catch(() => {})
+        } else {
+          el.pause()
+        }
+      },
+      { threshold: [0, 0.28, 0.55] },
+    )
+    loadIo.observe(section)
+    playIo.observe(section)
+    return () => {
+      loadIo.disconnect()
+      playIo.disconnect()
+      el.pause()
     }
-    play()
-    el.addEventListener('canplay', play)
-    return () => el.removeEventListener('canplay', play)
   }, [src])
 
   return (
-    <section id="video" className="relative overflow-hidden bg-[var(--beige)]/40 px-5 py-10 md:py-14">
+    <section
+      id="video"
+      ref={sectionRef}
+      className="relative overflow-hidden bg-[var(--beige)]/40 px-5 py-10 md:py-14"
+    >
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/20 blur-3xl" />
       <p className="relative text-center text-[10px] uppercase tracking-[0.4em] text-gold">A little film</p>
       <h2 className="relative mx-auto mt-2 max-w-sm text-center font-serif text-3xl text-[var(--ink)] md:text-4xl">
@@ -40,10 +66,9 @@ export default function InvitationVideo() {
           className="h-full w-full object-contain"
           src={src}
           muted={muted}
-          autoPlay
           playsInline
           loop
-          preload="auto"
+          preload="none"
           controls={false}
           onLoadedMetadata={(e) => {
             const el = e.currentTarget
