@@ -106,7 +106,7 @@
     start()
   }
 
-  ;['pointerdown', 'touchstart', 'touchend', 'mousedown', 'keydown', 'click'].forEach(function (name) {
+  ;['pointerdown', 'touchstart', 'touchend', 'mousedown', 'keydown', 'click', 'wheel'].forEach(function (name) {
     window.addEventListener(name, fromTouch, true)
   })
   document.addEventListener('visibilitychange', function () {

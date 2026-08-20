@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import ResponsiveImage from '../components/ResponsiveImage'
 import { COUPLE, introImagesFor } from '../data/wedding'
@@ -31,11 +31,12 @@ export default function IntroGate({ open, onOpen, musicPlaying, onToggleMusic, o
   const touchY = useRef<number | null>(null)
   const openedOnce = useRef(false)
 
-  const goNext = () => {
+  const goNext = useCallback(() => {
+    onPrimeMusic()
     if (openedOnce.current || open) return
     openedOnce.current = true
     onOpen()
-  }
+  }, [onOpen, onPrimeMusic, open])
 
   useEffect(() => {
     setIndex(0)
@@ -55,16 +56,23 @@ export default function IntroGate({ open, onOpen, musicPlaying, onToggleMusic, o
       setIndex(step)
     }, HOLD_MS)
     return () => window.clearInterval(id)
-  }, [open, slides.length, side])
+  }, [open, slides.length, side, goNext])
 
   useEffect(() => {
     if (open) return
     const onWheel = (e: WheelEvent) => {
-      if (e.deltaY > 12) goNext()
+      if (Math.abs(e.deltaY) > 6 || Math.abs(e.deltaX) > 6) goNext()
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') goNext()
     }
     window.addEventListener('wheel', onWheel, { passive: true })
-    return () => window.removeEventListener('wheel', onWheel)
-  }, [open])
+    window.addEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('wheel', onWheel)
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [open, goNext])
 
   const photo = slides[index]
   const pan = PANS[index % PANS.length]
@@ -73,19 +81,25 @@ export default function IntroGate({ open, onOpen, musicPlaying, onToggleMusic, o
     <AnimatePresence>
       {!open && (
         <motion.section
-          className="fixed inset-0 z-[60] overflow-hidden bg-black"
+          className="fixed inset-0 z-[60] overflow-hidden bg-black [touch-action:pan-y]"
           exit={{ opacity: 0 }}
           transition={{ duration: 0.45 }}
+          onWheel={() => goNext()}
           onPointerDown={onPrimeMusic}
           onTouchStart={(e) => {
             onPrimeMusic()
             touchY.current = e.touches[0]?.clientY ?? null
           }}
+          onTouchMove={(e) => {
+            const start = touchY.current
+            const y = e.touches[0]?.clientY
+            if (start != null && y != null && Math.abs(start - y) > 24) goNext()
+          }}
           onTouchEnd={(e) => {
             const start = touchY.current
             const end = e.changedTouches[0]?.clientY
             touchY.current = null
-            if (start != null && end != null && start - end > 40) goNext()
+            if (start != null && end != null && Math.abs(start - end) > 24) goNext()
           }}
         >
           <AnimatePresence mode="sync">
@@ -125,7 +139,7 @@ export default function IntroGate({ open, onOpen, musicPlaying, onToggleMusic, o
             {musicPlaying ? 'Music On' : 'Music Off'}
           </button>
 
-          <div className="absolute inset-x-0 bottom-0 z-10 px-5 pb-[max(1.4rem,env(safe-area-inset-bottom))] pt-24 text-center">
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 px-5 pb-[max(1.4rem,env(safe-area-inset-bottom))] pt-24 text-center">
             <p className="font-serif italic text-[16px] leading-snug text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.65)]">
               {COUPLE.tagline}
             </p>
@@ -141,7 +155,11 @@ export default function IntroGate({ open, onOpen, musicPlaying, onToggleMusic, o
             <p className="mt-3 text-sm text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.7)]">
               Thank you for opening this. Your presence means everything to us.
             </p>
-            <button type="button" onClick={goNext} className="mx-auto mt-5 flex flex-col items-center gap-1.5 text-white">
+            <button
+              type="button"
+              onClick={goNext}
+              className="pointer-events-auto mx-auto mt-5 flex flex-col items-center gap-1.5 text-white"
+            >
               <span className="text-xs tracking-[0.22em] uppercase [text-shadow:0_2px_8px_rgba(0,0,0,0.65)]">
                 Scroll down
               </span>

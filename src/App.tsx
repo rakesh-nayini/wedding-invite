@@ -11,7 +11,6 @@ import ProgressBar from './components/ProgressBar'
 import GlassNav from './components/GlassNav'
 import InviteDrawer from './components/InviteDrawer'
 import Blessings from './components/Blessings'
-import { useLenis } from './hooks/useLenis'
 import { useScrollResponse } from './hooks/useScrollResponse'
 import { InviteProvider, useInvite } from './hooks/useInvite'
 
@@ -27,7 +26,6 @@ function Experience() {
   const [musicPlaying, setMusicPlaying] = useState(false)
   const openedRef = useRef(false)
   const musicOnRef = useRef(true)
-  useLenis(opened)
   useScrollResponse(opened)
 
   const openInvite = useCallback(() => {
@@ -68,7 +66,10 @@ function Experience() {
   }, [])
 
   useEffect(() => {
-    document.body.style.overflow = opened ? '' : 'hidden'
+    const html = document.documentElement
+    html.style.overflowY = opened ? 'auto' : 'hidden'
+    document.body.style.overflowY = opened ? 'auto' : 'hidden'
+    document.body.style.overflowX = 'hidden'
   }, [opened])
 
   return (
