@@ -16,13 +16,6 @@ import { InviteProvider, useInvite } from './hooks/useInvite'
 
 function startMusic() {
   window.__inviteMusicOff = false
-  const el = document.getElementById('invite-music') as HTMLAudioElement | null
-  if (el) {
-    el.muted = false
-    el.loop = true
-    if (el.paused) el.volume = 0.12
-    void el.play().catch(() => {})
-  }
   window.inviteMusicStart?.()
 }
 

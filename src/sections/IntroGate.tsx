@@ -50,9 +50,9 @@ export default function IntroGate({ onPrimeMusic, onContinue }: IntroGateProps) 
   const pan = PANS[index % PANS.length]
 
   const begin = () => {
+    onPrimeMusic()
     if (begunRef.current) return
     begunRef.current = true
-    onPrimeMusic()
     onContinue()
     setBegun(true)
   }
@@ -113,7 +113,7 @@ export default function IntroGate({ onPrimeMusic, onContinue }: IntroGateProps) 
             <p className="mt-2 text-xs uppercase tracking-[0.28em] text-[#f3d48a]">27 August 2026</p>
             <button
               type="button"
-              onPointerDown={begin}
+              onClick={begin}
               className="mt-8 min-h-12 min-w-[16rem] rounded-full bg-[#f3d48a] px-8 py-3.5 font-serif text-lg text-[#5c1c1c] shadow-[0_12px_30px_rgba(0,0,0,0.35)]"
             >
               Open invitation
