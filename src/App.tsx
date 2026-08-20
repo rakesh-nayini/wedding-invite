@@ -21,18 +21,14 @@ function startMusic() {
 
 function Experience() {
   const { side } = useInvite()
-  const [opened, setOpened] = useState(false)
-  const [musicOn, setMusicOn] = useState(true)
+  const [scrolled, setScrolled] = useState(false)
   const [musicPlaying, setMusicPlaying] = useState(false)
-  const openedRef = useRef(false)
   const musicOnRef = useRef(true)
-  useScrollResponse(opened)
+  useScrollResponse(true)
 
-  const openInvite = useCallback(() => {
+  const markScrolled = useCallback(() => {
     startMusic()
-    if (openedRef.current) return
-    openedRef.current = true
-    setOpened(true)
+    setScrolled(true)
   }, [])
 
   const toggleMusic = () => {
@@ -41,12 +37,10 @@ function Experience() {
     if (playing) {
       musicOnRef.current = false
       window.inviteMusicStop?.()
-      setMusicOn(false)
       setMusicPlaying(false)
       return
     }
     musicOnRef.current = true
-    setMusicOn(true)
     startMusic()
   }
 
@@ -66,18 +60,21 @@ function Experience() {
   }, [])
 
   useEffect(() => {
-    const html = document.documentElement
-    html.style.overflowY = opened ? 'auto' : 'hidden'
-    document.body.style.overflowY = opened ? 'auto' : 'hidden'
-    document.body.style.overflowX = 'hidden'
-  }, [opened])
+    const onScroll = () => {
+      startMusic()
+      if (window.scrollY > 20) setScrolled(true)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   return (
     <div className="bg-[var(--paper)] text-[var(--ink)]">
       <CustomCursor />
-      {opened && <ProgressBar />}
-      <GlassNav visible={opened} />
-      {opened && (
+      {scrolled && <ProgressBar />}
+      <GlassNav visible={scrolled} />
+      {scrolled && (
         <button
           type="button"
           data-music-toggle
@@ -88,22 +85,20 @@ function Experience() {
         </button>
       )}
       <IntroGate
-        open={opened}
-        onOpen={openInvite}
         musicPlaying={musicPlaying}
-        musicOn={musicOn}
         onToggleMusic={toggleMusic}
         onPrimeMusic={startMusic}
+        onContinue={markScrolled}
       />
       <main key={side}>
-        {opened && (
+        <OurStory />
+        <Events />
+        <InvitationVideo canPlay={scrolled} />
+        <WhenWhere />
+        <FamilyTogether />
+        <Footer />
+        {scrolled && (
           <>
-            <OurStory />
-            <Events />
-            <InvitationVideo canPlay={opened} />
-            <WhenWhere />
-            <FamilyTogether />
-            <Footer />
             <InviteDrawer />
             <Blessings />
           </>
