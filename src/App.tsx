@@ -18,6 +18,7 @@ import { asset } from './utils/assets'
 
 const THEME_SRC = asset('assets/audio/theme.mp3')
 const TARGET_VOLUME = 0.35
+const FADE_MS = 2000
 
 function Experience() {
   const { side } = useInvite()
@@ -43,7 +44,7 @@ function Experience() {
         fadingRef.current = false
         return
       }
-      const t = Math.min(1, (now - start) / 4500)
+      const t = Math.min(1, (now - start) / FADE_MS)
       el.volume = from + (TARGET_VOLUME - from) * t
       if (t < 1) fadeRef.current = requestAnimationFrame(tick)
       else fadingRef.current = false
@@ -56,19 +57,27 @@ function Experience() {
     const el = audioRef.current
     if (!el) return
     el.loop = true
-    const startFadeIfAudible = () => {
-      if (!el.muted) fadeUp(el)
+    const afterPlay = () => {
+      el.muted = false
+      fadeUp(el)
     }
     if (!el.paused) {
-      startFadeIfAudible()
+      afterPlay()
       return
     }
+    el.volume = 0
     void el
       .play()
-      .then(startFadeIfAudible)
+      .then(afterPlay)
       .catch(() => {
         el.muted = true
-        void el.play().then(() => {}).catch(() => {})
+        void el
+          .play()
+          .then(() => {
+            el.muted = false
+            fadeUp(el)
+          })
+          .catch(() => {})
       })
   }, [fadeUp])
 
@@ -77,6 +86,7 @@ function Experience() {
     const el = audioRef.current
     if (!el) return
     el.muted = false
+    if (el.volume < 0.02) el.volume = 0
     ensurePlaying()
   }, [ensurePlaying])
 
@@ -112,13 +122,20 @@ function Experience() {
     el.volume = 0
     el.loop = true
     el.muted = false
-    ensurePlaying()
+    el.setAttribute('playsinline', 'true')
+    el.setAttribute('webkit-playsinline', 'true')
+    const kick = () => ensurePlaying()
+    kick()
+    el.addEventListener('canplay', kick)
+    el.addEventListener('canplaythrough', kick)
     const events: Array<keyof WindowEventMap> = ['pointerdown', 'touchstart', 'keydown', 'click']
     events.forEach((name) => window.addEventListener(name, unlockAudio, { capture: true }))
     const poll = window.setInterval(() => {
-      if (musicOnRef.current && el.paused) ensurePlaying()
-    }, 2000)
+      if (musicOnRef.current && el.paused) kick()
+    }, 800)
     return () => {
+      el.removeEventListener('canplay', kick)
+      el.removeEventListener('canplaythrough', kick)
       events.forEach((name) => window.removeEventListener(name, unlockAudio, { capture: true } as EventListenerOptions))
       window.clearInterval(poll)
       if (fadeRef.current) cancelAnimationFrame(fadeRef.current)
@@ -135,6 +152,7 @@ function Experience() {
         ref={audioRef}
         src={THEME_SRC}
         loop
+        autoPlay
         playsInline
         preload="auto"
         className="hidden"

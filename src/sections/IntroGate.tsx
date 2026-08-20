@@ -71,7 +71,7 @@ export default function IntroGate({ open, onOpen, musicOn, onToggleMusic }: Intr
     <AnimatePresence>
       {!open && (
         <motion.section
-          className="fixed inset-0 z-[60] overflow-hidden bg-[var(--paper)]"
+          className="fixed inset-0 z-[60] overflow-hidden bg-black"
           exit={{ opacity: 0 }}
           transition={{ duration: 0.45 }}
           onTouchStart={(e) => {
@@ -103,7 +103,7 @@ export default function IntroGate({ open, onOpen, musicOn, onToggleMusic }: Intr
                   slug={photo.slug}
                   alt=""
                   width={1920}
-                  className="h-full w-full object-contain object-center"
+                  className="h-full w-full object-cover object-center"
                   eager
                 />
               </motion.div>
@@ -136,12 +136,20 @@ export default function IntroGate({ open, onOpen, musicOn, onToggleMusic }: Intr
             <p className="mt-3 text-sm text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.7)]">
               Thank you for opening this. Your presence means everything to us.
             </p>
-            <button type="button" onClick={goNext} className="mx-auto mt-5 flex flex-col items-center gap-1 text-white">
+            <button type="button" onClick={goNext} className="mx-auto mt-5 flex flex-col items-center gap-1.5 text-white">
               <span className="text-xs tracking-[0.22em] uppercase [text-shadow:0_2px_8px_rgba(0,0,0,0.65)]">
                 Scroll down
               </span>
-              <span className="scroll-hint text-3xl leading-none [text-shadow:0_2px_10px_rgba(0,0,0,0.6)]" aria-hidden>
-                ↓
+              <span className="scroll-hint text-[#f3d48a]" aria-hidden>
+                <svg viewBox="0 0 32 32" className="h-11 w-11" fill="none">
+                  <path
+                    d="M6 11 L16 22 L26 11"
+                    stroke="currentColor"
+                    strokeWidth="3.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </span>
             </button>
           </div>

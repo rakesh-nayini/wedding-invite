@@ -30,24 +30,24 @@ export const VENUES = {
     mapsUrl: 'https://maps.app.goo.gl/npVgbeCLmuPMciJN9?g_st=ac',
   },
   gajwel: {
-    name: 'Gajwel',
+    name: 'Vemulaghat',
     label: 'Haldi',
     when: 'Tuesday, 25 August · 4:00 PM',
-    address: 'Gajwel, Telangana',
+    address: 'Vemulaghat · Gajwel',
     mapsUrl: 'https://maps.app.goo.gl/L1LwdfKDJLFE3jrh7?g_st=ac',
   },
   siddipet: {
     name: 'Padmanayaka Gardens',
     label: 'Wedding',
-    when: 'Thursday, 27 August · 11:20 AM · Thula Lagnam',
-    address: 'Behind Rural Police Station, Bypass Road, Siddipet',
+    when: 'Thursday, 27 August · 11:20 AM',
+    address: 'Siddipet',
     mapsUrl: 'https://maps.app.goo.gl/URyDw2uuVgPUronv7?g_st=ac',
   },
   reception: {
     name: 'S Convention Hall',
     label: 'Reception',
     when: 'Sunday, 30 August · 6:30 PM',
-    address: 'Gajwel, Telangana',
+    address: 'Gajwel',
     mapsUrl: 'https://maps.app.goo.gl/LM6dectcE6dkGxUJ6?g_st=ac',
   },
 }
@@ -86,7 +86,7 @@ export const EVENTS: WeddingEvent[] = [
     title: 'Haldi',
     date: 'Tuesday, 25 August 2026',
     time: '4:00 PM',
-    venue: 'Gajwel',
+    venue: 'Vemulaghat, Gajwel',
     description: 'A blessing at home, with family and near & dear.',
     whisper: 'Rub the gold with your finger, like a lottery ticket',
     revealType: 'scratch',
@@ -235,6 +235,7 @@ export interface FamilyPage {
   groups: FamilyGroup[]
   littleOnes?: { names: string; note: string }
   favourite?: string
+  thanks?: string
 }
 
 export const FAMILY_PAGES: Record<InviteSide, FamilyPage> = {
@@ -245,7 +246,10 @@ export const FAMILY_PAGES: Record<InviteSide, FamilyPage> = {
     groups: [
       {
         label: 'Invited by',
-        lines: ['Smt. & Sri Hanumandlakadi Ranamma & Sudhakar Reddy'],
+        lines: [
+          'Smt. & Sri Hanumandlakadi Ranamma & Sudhakar Reddy',
+          'Smt. & Sri Hanumandlakadi Vinoda & Ravinder Reddy',
+        ],
       },
       {
         label: 'Divine blessings',
@@ -283,7 +287,9 @@ export const FAMILY_PAGES: Record<InviteSide, FamilyPage> = {
     ],
     littleOnes: {
       names: 'Vihaan · Arnika · Arshik',
-      note: 'Our little joy, Vihaan, with our beloved Arnika & Arshik — joining us from across the seas to share this happiness.',
+      note: 'Vihaan, just forty-five days new, already our littlest guest of honour — with Arnika & Arshik beside him.',
     },
+    thanks:
+      "With special thanks to every Nayini family member, and our cousin brothers, for standing with us in this joy.",
   },
 }

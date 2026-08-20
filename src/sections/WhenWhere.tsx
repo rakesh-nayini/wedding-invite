@@ -57,9 +57,7 @@ export default function WhenWhere() {
               <span className="block text-[10px] uppercase tracking-[0.28em] text-gold">{v.label}</span>
               <span className="mt-0.5 block font-serif text-lg text-[var(--ink)]">{v.name}</span>
               <span className="block text-xs text-[var(--muted)]">{v.when}</span>
-              {v.address && v.label === 'Wedding' && (
-                <span className="mt-0.5 block text-[11px] leading-snug text-[var(--muted)]">{v.address}</span>
-              )}
+              <span className="mt-0.5 block text-[11px] text-[var(--muted)]">{v.address}</span>
             </span>
             <span className="flex shrink-0 flex-col items-center gap-0.5 text-gold">
               <DirectionsIcon />

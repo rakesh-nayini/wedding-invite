@@ -126,16 +126,17 @@ body {
   0%,
   100% {
     transform: translateY(0);
-    opacity: 0.85;
+    opacity: 0.9;
   }
   50% {
-    transform: translateY(10px);
+    transform: translateY(14px);
     opacity: 1;
   }
 }
 
 .scroll-hint {
-  animation: bounce-y 1.6s ease-in-out infinite;
+  animation: bounce-y 1.45s ease-in-out infinite;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.55));
 }
 
 @media (prefers-reduced-motion: reduce) {

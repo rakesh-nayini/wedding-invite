@@ -35,6 +35,12 @@ export default function FamilyTogether() {
             <p className="mt-1 font-serif text-[15px] leading-relaxed text-[var(--ink)]">{page.favourite}</p>
           </div>
         )}
+        {page.thanks && (
+          <div className="py-3">
+            <p className="text-[10px] uppercase tracking-[0.28em] text-gold">Special thanks</p>
+            <p className="mt-1 font-serif text-[15px] leading-relaxed text-[var(--ink)]">{page.thanks}</p>
+          </div>
+        )}
       </div>
     </section>
   )
