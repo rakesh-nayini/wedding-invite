@@ -4,6 +4,7 @@ import OurStory from './sections/OurStory'
 import InvitationVideo from './sections/InvitationVideo'
 import Events from './sections/Events'
 import WhenWhere from './sections/WhenWhere'
+import FamilyTogether from './sections/FamilyTogether'
 import Footer from './sections/Footer'
 import CustomCursor from './components/CustomCursor'
 import ProgressBar from './components/ProgressBar'
@@ -12,7 +13,6 @@ import InviteDrawer from './components/InviteDrawer'
 import Blessings from './components/Blessings'
 import { useLenis } from './hooks/useLenis'
 import { useScrollResponse } from './hooks/useScrollResponse'
-import { useMusicPreference } from './hooks/useMusicPreference'
 import { InviteProvider, useInvite } from './hooks/useInvite'
 import { asset } from './utils/assets'
 
@@ -22,60 +22,87 @@ const TARGET_VOLUME = 0.35
 function Experience() {
   const { side } = useInvite()
   const [opened, setOpened] = useState(false)
-  const { enabled: musicOn, toggle: toggleMusicPref, turnOn: turnMusicOn } = useMusicPreference()
+  const [musicOn, setMusicOn] = useState(true)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const openedRef = useRef(false)
+  const musicOnRef = useRef(true)
+  const fadingRef = useRef(false)
   const fadeRef = useRef<number | null>(null)
   useLenis(opened)
   useScrollResponse(opened)
 
-  const fadeIn = useCallback((el: HTMLAudioElement) => {
+  const fadeUp = useCallback((el: HTMLAudioElement) => {
+    if (el.muted) return
+    if (fadingRef.current) return
+    fadingRef.current = true
     if (fadeRef.current) cancelAnimationFrame(fadeRef.current)
-    turnMusicOn()
-    el.muted = false
+    const from = el.volume
     const start = performance.now()
     const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / 4200)
-      el.volume = TARGET_VOLUME * t
+      if (!musicOnRef.current) {
+        fadingRef.current = false
+        return
+      }
+      const t = Math.min(1, (now - start) / 4500)
+      el.volume = from + (TARGET_VOLUME - from) * t
       if (t < 1) fadeRef.current = requestAnimationFrame(tick)
+      else fadingRef.current = false
     }
     fadeRef.current = requestAnimationFrame(tick)
-  }, [turnMusicOn])
+  }, [])
 
-  const playMusic = useCallback(
-    (soft = false) => {
-      const el = audioRef.current
-      if (!el) return
-      el.loop = true
-      if (!soft) {
-        el.volume = TARGET_VOLUME
-        turnMusicOn()
-      }
-      const start = () => {
-        void el.play().then(() => {
-          if (soft) fadeIn(el)
-        }).catch(() => {})
-      }
-      start()
-    },
-    [fadeIn, turnMusicOn],
-  )
+  const ensurePlaying = useCallback(() => {
+    if (!musicOnRef.current) return
+    const el = audioRef.current
+    if (!el) return
+    el.loop = true
+    const startFadeIfAudible = () => {
+      if (!el.muted) fadeUp(el)
+    }
+    if (!el.paused) {
+      startFadeIfAudible()
+      return
+    }
+    void el
+      .play()
+      .then(startFadeIfAudible)
+      .catch(() => {
+        el.muted = true
+        void el.play().then(() => {}).catch(() => {})
+      })
+  }, [fadeUp])
+
+  const unlockAudio = useCallback(() => {
+    if (!musicOnRef.current) return
+    const el = audioRef.current
+    if (!el) return
+    el.muted = false
+    ensurePlaying()
+  }, [ensurePlaying])
 
   const openInvite = useCallback(() => {
+    unlockAudio()
     if (openedRef.current) return
     openedRef.current = true
     setOpened(true)
-  }, [])
+  }, [unlockAudio])
 
   const toggleMusic = () => {
     const el = audioRef.current
-    if (musicOn) {
+    if (musicOnRef.current) {
+      musicOnRef.current = false
       if (fadeRef.current) cancelAnimationFrame(fadeRef.current)
+      fadingRef.current = false
       el?.pause()
-      toggleMusicPref()
+      setMusicOn(false)
     } else {
-      if (el) el.volume = TARGET_VOLUME
-      playMusic(false)
+      musicOnRef.current = true
+      setMusicOn(true)
+      if (el) {
+        el.muted = false
+        if (el.volume < 0.05) el.volume = 0
+      }
+      ensurePlaying()
     }
   }
 
@@ -83,24 +110,20 @@ function Experience() {
     const el = audioRef.current
     if (!el) return
     el.volume = 0
-    const unlock = () => {
-      playMusic(true)
-    }
-    void el
-      .play()
-      .then(() => fadeIn(el))
-      .catch(() => {
-        window.addEventListener('pointerdown', unlock, { once: true })
-        window.addEventListener('touchstart', unlock, { once: true })
-        window.addEventListener('wheel', unlock, { once: true })
-      })
+    el.loop = true
+    el.muted = false
+    ensurePlaying()
+    const events: Array<keyof WindowEventMap> = ['pointerdown', 'touchstart', 'keydown', 'click']
+    events.forEach((name) => window.addEventListener(name, unlockAudio, { capture: true }))
+    const poll = window.setInterval(() => {
+      if (musicOnRef.current && el.paused) ensurePlaying()
+    }, 2000)
     return () => {
-      window.removeEventListener('pointerdown', unlock)
-      window.removeEventListener('touchstart', unlock)
-      window.removeEventListener('wheel', unlock)
+      events.forEach((name) => window.removeEventListener(name, unlockAudio, { capture: true } as EventListenerOptions))
+      window.clearInterval(poll)
       if (fadeRef.current) cancelAnimationFrame(fadeRef.current)
     }
-  }, [fadeIn, playMusic])
+  }, [ensurePlaying, unlockAudio])
 
   useEffect(() => {
     document.body.style.overflow = opened ? '' : 'hidden'
@@ -108,7 +131,14 @@ function Experience() {
 
   return (
     <div className="bg-[var(--paper)] text-[var(--ink)]">
-      <audio ref={audioRef} src={THEME_SRC} loop playsInline preload="auto" className="hidden" />
+      <audio
+        ref={audioRef}
+        src={THEME_SRC}
+        loop
+        playsInline
+        preload="auto"
+        className="hidden"
+      />
       <CustomCursor />
       {opened && <ProgressBar />}
       <GlassNav visible={opened} />
@@ -129,6 +159,7 @@ function Experience() {
             <Events />
             <InvitationVideo canPlay={opened} />
             <WhenWhere />
+            <FamilyTogether />
             <Footer />
             <InviteDrawer />
             <Blessings />

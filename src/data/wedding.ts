@@ -39,8 +39,8 @@ export const VENUES = {
   siddipet: {
     name: 'Padmanayaka Gardens',
     label: 'Wedding',
-    when: 'Thursday, 27 August · 11:20 AM',
-    address: 'Siddipet, Telangana',
+    when: 'Thursday, 27 August · 11:20 AM · Thula Lagnam',
+    address: 'Behind Rural Police Station, Bypass Road, Siddipet',
     mapsUrl: 'https://maps.app.goo.gl/URyDw2uuVgPUronv7?g_st=ac',
   },
   reception: {
@@ -99,7 +99,7 @@ export const EVENTS: WeddingEvent[] = [
     date: 'Thursday, 27 August 2026',
     time: '11:20 AM',
     venue: 'Padmanayaka Gardens, Siddipet',
-    description: 'Two families. One promise. Forever begins here.',
+    description: 'Sumuhurtham at 11:20 in the morning — Thula Lagnam, Dhanishta Nakshatra. Two families. One promise.',
     whisper: 'Tap the threads to tie the knot',
     revealType: 'knot',
     accent: '#B76E79',
@@ -111,7 +111,7 @@ export const EVENTS: WeddingEvent[] = [
     date: 'Thursday, 27 August 2026',
     time: '11:20 AM',
     venue: 'Padmanayaka Gardens, Siddipet',
-    description: 'Two families. One promise. Forever begins here.',
+    description: 'Sumuhurtham at 11:20 in the morning — Thula Lagnam, Dhanishta Nakshatra. Two families. One promise.',
     whisper: 'Tap the threads to tie the knot',
     revealType: 'knot',
     accent: '#C9A962',
@@ -212,3 +212,78 @@ export const VIDEOS = {
 export const BLESSINGS = ['శుభమస్తు', 'శ్రీరస్తు', 'కల్యాణమస్తు']
 
 export const PHOTO_CREDIT = 'The Pixel Photography'
+
+export const MUHURTHAM = {
+  title: 'Sumuhurtham',
+  time: '11:20 AM',
+  lagnam: 'Thula Lagnam',
+  nakshatra: 'Dhanishta Nakshatra',
+  tithi: 'Shravana Shukla Chaturdashi',
+  year: 'Parabhava Nama Samvatsara',
+  line: '11:20 AM · Thula Lagnam · Dhanishta Nakshatra',
+}
+
+export interface FamilyGroup {
+  label: string
+  lines: string[]
+}
+
+export interface FamilyPage {
+  kicker: string
+  title: string
+  village: string
+  groups: FamilyGroup[]
+  littleOnes?: { names: string; note: string }
+  favourite?: string
+}
+
+export const FAMILY_PAGES: Record<InviteSide, FamilyPage> = {
+  bride: {
+    kicker: 'Hanumandlakadi family',
+    title: 'With our people',
+    village: 'Gudikandula, Thoguta · Siddipet',
+    groups: [
+      {
+        label: 'Invited by',
+        lines: ['Smt. & Sri Hanumandlakadi Ranamma & Sudhakar Reddy'],
+      },
+      {
+        label: 'Divine blessings',
+        lines: ['Late Hanumandlakadi Shyamala & Late Shiva Reddy'],
+      },
+      {
+        label: 'Blessings',
+        lines: ['Smt. Mallaiahgari Ratnamma & Late Shiva Reddy'],
+      },
+      {
+        label: 'Family',
+        lines: [
+          'Pavani & Akhil',
+          'Rachana & Pavan, with Junnu & Dolu',
+          'Ritu',
+        ],
+      },
+    ],
+    favourite:
+      "With love for Swapna Akka & Reshma — the bride's favourites, who have helped so much with this wedding.",
+  },
+  groom: {
+    kicker: 'Nayini family',
+    title: 'With our people',
+    village: 'Vemulaghat, Gajwel · Siddipet',
+    groups: [
+      {
+        label: 'Invited by',
+        lines: [
+          'Smt. & Sri Nayini Venkatalaxmi & Mallareddy',
+          'Smt. & Sri Udara Navya & Mahender Reddy',
+          'Smt. & Sri Nayini Pragathi & Narender Reddy',
+        ],
+      },
+    ],
+    littleOnes: {
+      names: 'Vihaan · Arnika · Arshik',
+      note: 'Our little joy, Vihaan, with our beloved Arnika & Arshik — joining us from across the seas to share this happiness.',
+    },
+  },
+}

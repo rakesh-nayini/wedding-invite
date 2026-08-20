@@ -14,11 +14,11 @@ interface IntroGateProps {
 
 const HOLD_MS = 2000
 const PANS = [
-  { initial: { scale: 1.08, x: 0, y: 0 }, animate: { scale: 1.2, x: -28, y: 8 } },
-  { initial: { scale: 1.14, x: 12, y: 0 }, animate: { scale: 1.06, x: -8, y: -16 } },
-  { initial: { scale: 1.06, x: 0, y: 10 }, animate: { scale: 1.18, x: 22, y: 0 } },
-  { initial: { scale: 1.1, x: -10, y: 4 }, animate: { scale: 1.18, x: 16, y: -10 } },
-  { initial: { scale: 1.12, x: 8, y: -6 }, animate: { scale: 1.06, x: -14, y: 8 } },
+  { initial: { scale: 1, x: 0, y: 0 }, animate: { scale: 1.045, x: 6, y: 0 } },
+  { initial: { scale: 1, x: 0, y: 0 }, animate: { scale: 1.04, x: -8, y: 4 } },
+  { initial: { scale: 1, x: 0, y: 0 }, animate: { scale: 1.05, x: 0, y: -6 } },
+  { initial: { scale: 1, x: 0, y: 0 }, animate: { scale: 1.04, x: 8, y: 2 } },
+  { initial: { scale: 1, x: 0, y: 0 }, animate: { scale: 1.045, x: -4, y: -4 } },
 ]
 
 export default function IntroGate({ open, onOpen, musicOn, onToggleMusic }: IntroGateProps) {
@@ -94,16 +94,16 @@ export default function IntroGate({ open, onOpen, musicOn, onToggleMusic }: Intr
               transition={{ duration: 0.55, ease: 'easeInOut' }}
             >
               <motion.div
-                className="absolute inset-[-12%]"
-                initial={reduced ? { scale: 1.08 } : pan.initial}
-                animate={reduced ? { scale: 1.08 } : pan.animate}
-                transition={reduced ? { duration: 0 } : { duration: HOLD_MS / 1000, ease: 'linear' }}
+                className="absolute inset-0"
+                initial={reduced ? { scale: 1 } : pan.initial}
+                animate={reduced ? { scale: 1 } : pan.animate}
+                transition={reduced ? { duration: 0 } : { duration: HOLD_MS / 1000, ease: 'easeOut' }}
               >
                 <ResponsiveImage
                   slug={photo.slug}
                   alt=""
                   width={1920}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-contain object-center"
                   eager
                 />
               </motion.div>

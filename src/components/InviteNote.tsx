@@ -1,9 +1,11 @@
+import { MUHURTHAM } from '../data/wedding'
 import { useInvite } from '../hooks/useInvite'
 import type { WeddingEvent } from '../data/wedding'
 
 export default function InviteNote({ event }: { event: WeddingEvent }) {
   const { firstName, secondName, familyLine, side } = useInvite()
   const individual = event.title === 'Haldi'
+  const isWedding = event.title === 'Wedding'
 
   return (
     <div className="flex h-full flex-col items-center justify-center px-7 py-8 text-center text-maroon">
@@ -27,7 +29,7 @@ export default function InviteNote({ event }: { event: WeddingEvent }) {
       )}
       <div className="my-4 h-px w-10 bg-gold/50" />
       <p className="font-serif text-lg">{event.date}</p>
-      <p className="mt-1 text-sm text-maroon/70">{event.time}</p>
+      <p className="mt-1 text-sm text-maroon/70">{isWedding ? MUHURTHAM.line : event.time}</p>
       <p className="mt-3 text-sm text-maroon/70">{event.venue}</p>
       <p className="mt-4 max-w-xs text-sm leading-relaxed text-maroon/60">{event.description}</p>
     </div>
