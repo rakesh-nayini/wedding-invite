@@ -51,16 +51,12 @@ export default function Events({ onPlayedEvent }: { onPlayedEvent: () => void })
       <p className="text-center text-[10px] uppercase tracking-[0.4em] text-gold">The celebrations</p>
       <h2 className="mt-2 text-center font-serif text-3xl text-[var(--ink)]">Haldi · Wedding · Reception</h2>
       <p className="mx-auto mt-3 max-w-sm text-center text-[15px] leading-relaxed text-[var(--ink)]/80">
-        Please keep scrolling. Open each card to see the date.
+        Three blessings, waiting to be opened.
       </p>
 
       <div className="mx-auto mt-8 max-w-md space-y-12">
         {events.map((event) => (
           <div key={event.id} id={`event-${event.title.toLowerCase()}`} className="scroll-mt-24">
-            <h3 className="mb-4 text-center font-serif text-2xl text-[var(--ink)]">{event.title}</h3>
-            {event.revealType === 'scratch' && (
-              <p className="mb-4 text-center text-[15px] leading-snug text-maroon">{event.whisper}</p>
-            )}
             <Reveal event={event} onPlayedEvent={onPlayedEvent} />
           </div>
         ))}

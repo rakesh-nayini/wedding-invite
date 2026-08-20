@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import confetti from 'canvas-confetti'
 import { useReducedMotion } from '../hooks/useMediaQuery'
+import InviteFrame from './InviteFrame'
 
 interface ScratchCardProps {
-  children: React.ReactNode
+  children: ReactNode
   threshold?: number
   onComplete?: () => void
 }
@@ -39,11 +40,11 @@ export default function ScratchCard({ children, threshold = 0.35, onComplete }: 
       ctx.fill()
     }
     ctx.fillStyle = 'rgba(92, 26, 26, 0.85)'
-    ctx.font = '600 17px Outfit, sans-serif'
+    ctx.font = 'italic 22px "Cormorant Garamond", Georgia, serif'
     ctx.textAlign = 'center'
-    ctx.fillText('Rub this gold with your finger', width / 2, height / 2 - 14)
-    ctx.font = '500 15px Outfit, sans-serif'
-    ctx.fillText('to open the Haldi invite', width / 2, height / 2 + 12)
+    ctx.fillText('A blessing in gold', width / 2, height / 2 - 8)
+    ctx.font = 'italic 16px "Cormorant Garamond", Georgia, serif'
+    ctx.fillText('Rub to reveal', width / 2, height / 2 + 18)
   }, [])
 
   useEffect(() => {
@@ -138,27 +139,45 @@ export default function ScratchCard({ children, threshold = 0.35, onComplete }: 
   }
 
   return (
-    <div ref={wrapRef} className="relative mx-auto aspect-[3/4] w-full max-w-md overflow-hidden rounded-[2rem] shadow-[0_16px_40px_rgba(92,26,26,0.08)]">
-      <div className="absolute inset-0">{children}</div>
-      {!done && (
-        <canvas
-          ref={canvasRef}
-          className="absolute inset-0 z-10 touch-none cursor-none"
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          onPointerLeave={onPointerUp}
-        />
-      )}
-      {(reduced || !done) && (
-        <button
-          type="button"
-          className="absolute bottom-4 left-4 right-4 z-20 rounded-full bg-white px-4 py-3 text-sm font-medium text-maroon shadow-sm"
-          onClick={revealAll}
-        >
-          Can’t rub? Tap here to open
-        </button>
-      )}
-    </div>
+    <InviteFrame className="mx-auto w-full max-w-md">
+      <p className="text-center text-[10px] tracking-[0.38em] uppercase text-gold">Haldi</p>
+      <h3 className="mt-2 text-center font-serif italic text-[1.85rem] leading-tight text-[#5c1c1c]">
+        A blessing in gold
+      </h3>
+      <div
+        ref={wrapRef}
+        className="relative mx-auto mt-5 aspect-[3/4] w-full overflow-hidden rounded-[1.25rem]"
+      >
+        <div className="absolute inset-0">{children}</div>
+        {!done && (
+          <canvas
+            ref={canvasRef}
+            className="absolute inset-0 z-10 touch-none cursor-none"
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onPointerLeave={onPointerUp}
+          />
+        )}
+        {reduced && !done && (
+          <button
+            type="button"
+            className="absolute bottom-4 left-4 right-4 z-20 rounded-full bg-white/90 px-4 py-3 font-serif italic text-maroon"
+            onClick={revealAll}
+          >
+            Tap to open
+          </button>
+        )}
+        {!reduced && !done && (
+          <button
+            type="button"
+            className="absolute bottom-3 left-0 right-0 z-20 font-serif italic text-sm text-[#5c1c1c]/75"
+            onClick={revealAll}
+          >
+            Or tap to open
+          </button>
+        )}
+      </div>
+    </InviteFrame>
   )
 }
