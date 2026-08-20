@@ -12,6 +12,9 @@ export default function Footer() {
       </p>
       <p className="mt-2 text-sm tracking-[0.2em] text-gold uppercase">{COUPLE.weddingDate}</p>
       <p className="mt-8 text-sm text-[var(--ink)]/75">Photography · {PHOTO_CREDIT}</p>
+      <p className="mx-auto mt-6 max-w-sm text-[15px] leading-relaxed text-[var(--ink)]/80">
+        Thank you for staying till the end. Your presence with us is the blessing we are hoping for.
+      </p>
       <div className="mx-auto mt-8 max-w-md border-t border-gold/35 pt-6">
         <p className="font-serif text-lg leading-snug text-[var(--ink)] md:text-xl">
           Made with the self-interest of the groom,

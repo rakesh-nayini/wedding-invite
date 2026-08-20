@@ -169,27 +169,31 @@ export const STORY_CHAPTERS: Array<{
   kicker: string
   title: string
   text: string
+  frame: '3/2' | '3/4'
 }> = [
   {
     id: 'beginning',
     image: { bride: 'engagement-bride', groom: 'engagement-groom' },
     kicker: 'The beginning',
     title: 'A glance that stayed',
-    text: 'It began quietly — an engagement, a smile, and the feeling that home had found a name.',
+    text: 'It began with family around us — a smile, a promise, and the feeling that home had found a name. We are so glad you are here to see it.',
+    frame: '3/2',
   },
   {
     id: 'promise',
     image: 'story-wedding',
     kicker: 'The vow',
     title: 'A promise for forever',
-    text: 'Not a grand speech. Just two hearts choosing each other — for this life, and every one after.',
+    text: 'Not a grand speech. Just two hearts choosing each other — and a day that feels complete when you are with us.',
+    frame: '3/4',
   },
   {
     id: 'celebration',
     image: 'story-reception',
     kicker: 'The joy',
     title: 'A celebration with everyone we love',
-    text: 'On 30 August we gather again — for joy, music, and a night to celebrate with you.',
+    text: 'On 30 August we gather again. Please keep going — your presence is one of the gifts we are waiting for.',
+    frame: '3/4',
   },
 ]
 

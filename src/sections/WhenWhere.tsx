@@ -29,6 +29,9 @@ export default function WhenWhere() {
       </div>
 
       <p className="mt-10 text-center text-[10px] uppercase tracking-[0.4em] text-gold">When & where</p>
+      <p className="mx-auto mt-3 max-w-sm text-center text-sm text-[var(--muted)]">
+        If you can come, even for a little while, it will mean so much.
+      </p>
       <div className="mx-auto mt-4 w-full max-w-md space-y-3">
         {cards.map((v) => (
           <a

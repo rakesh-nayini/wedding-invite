@@ -55,12 +55,12 @@ export default function OurStory() {
             <p className="mt-4 text-[15px] leading-relaxed text-[var(--muted)]">{c.text}</p>
           </div>
           <div className="relative mx-auto mt-8 w-full max-w-md overflow-hidden rounded-[1.75rem]">
-            <div className="relative aspect-[3/4]">
+            <div className={`relative ${c.frame === '3/2' ? 'aspect-[3/2]' : 'aspect-[3/4]'}`}>
               <ResponsiveImage
                 key={slug}
                 slug={slug}
                 alt={c.title}
-                className="story-img absolute inset-0 h-full w-full object-cover object-[center_42%]"
+                className={`story-img absolute inset-0 h-full w-full object-cover ${c.frame === '3/2' ? 'object-center' : 'object-[center_42%]'}`}
               />
             </div>
           </div>

@@ -36,7 +36,7 @@ export default function Events() {
       <p className="text-center text-[10px] uppercase tracking-[0.4em] text-gold">The celebrations</p>
       <h2 className="mt-2 text-center font-serif text-3xl text-[var(--ink)]">Haldi · Wedding · Reception</h2>
       <p className="mx-auto mt-3 max-w-sm text-center text-[15px] leading-relaxed text-[var(--ink)]/80">
-        Each card opens with a small action. Read the line above the card, then tap or rub.
+        Please keep scrolling. Each card is a small surprise — and each date is waiting for you.
       </p>
 
       <div className="mx-auto mt-8 max-w-md space-y-12">

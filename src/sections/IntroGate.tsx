@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import MagneticButton from '../components/MagneticButton'
 import ResponsiveImage from '../components/ResponsiveImage'
 import { COUPLE, introImagesFor } from '../data/wedding'
 import { useInvite } from '../hooks/useInvite'
@@ -13,7 +12,7 @@ interface IntroGateProps {
   onToggleMusic: () => void
 }
 
-const HOLD_MS = 3800
+const HOLD_MS = 2000
 const PANS = [
   { initial: { scale: 1.08, x: 0, y: 0 }, animate: { scale: 1.2, x: -28, y: 8 } },
   { initial: { scale: 1.14, x: 12, y: 0 }, animate: { scale: 1.06, x: -8, y: -16 } },
@@ -27,18 +26,43 @@ export default function IntroGate({ open, onOpen, musicOn, onToggleMusic }: Intr
   const reduced = useReducedMotion()
   const slides = introImagesFor(side)
   const [index, setIndex] = useState(0)
+  const touchY = useRef<number | null>(null)
+  const openedOnce = useRef(false)
+
+  const goNext = () => {
+    if (openedOnce.current || open) return
+    openedOnce.current = true
+    onOpen()
+  }
 
   useEffect(() => {
     setIndex(0)
+    openedOnce.current = false
   }, [side])
 
   useEffect(() => {
-    if (open || reduced) return
+    if (open) return
+    let step = 0
     const id = window.setInterval(() => {
-      setIndex((i) => (i + 1) % slides.length)
+      step += 1
+      if (step >= slides.length) {
+        window.clearInterval(id)
+        goNext()
+        return
+      }
+      setIndex(step)
     }, HOLD_MS)
     return () => window.clearInterval(id)
-  }, [open, reduced, slides.length])
+  }, [open, slides.length, side])
+
+  useEffect(() => {
+    if (open) return
+    const onWheel = (e: WheelEvent) => {
+      if (e.deltaY > 12) goNext()
+    }
+    window.addEventListener('wheel', onWheel, { passive: true })
+    return () => window.removeEventListener('wheel', onWheel)
+  }, [open])
 
   const photo = slides[index]
   const pan = PANS[index % PANS.length]
@@ -49,7 +73,16 @@ export default function IntroGate({ open, onOpen, musicOn, onToggleMusic }: Intr
         <motion.section
           className="fixed inset-0 z-[60] overflow-hidden bg-[var(--paper)]"
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.45 }}
+          onTouchStart={(e) => {
+            touchY.current = e.touches[0]?.clientY ?? null
+          }}
+          onTouchEnd={(e) => {
+            const start = touchY.current
+            const end = e.changedTouches[0]?.clientY
+            touchY.current = null
+            if (start != null && end != null && start - end > 40) goNext()
+          }}
         >
           <AnimatePresence mode="sync">
             <motion.div
@@ -58,7 +91,7 @@ export default function IntroGate({ open, onOpen, musicOn, onToggleMusic }: Intr
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.7, ease: 'easeInOut' }}
+              transition={{ duration: 0.55, ease: 'easeInOut' }}
             >
               <motion.div
                 className="absolute inset-[-12%]"
@@ -87,7 +120,7 @@ export default function IntroGate({ open, onOpen, musicOn, onToggleMusic }: Intr
             Music {musicOn ? 'On' : 'Off'}
           </button>
 
-          <div className="absolute inset-x-0 bottom-0 z-10 px-5 pb-[max(1.4rem,env(safe-area-inset-bottom))] pt-28 text-center">
+          <div className="absolute inset-x-0 bottom-0 z-10 px-5 pb-[max(1.4rem,env(safe-area-inset-bottom))] pt-24 text-center">
             <p className="font-serif italic text-[16px] leading-snug text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.65)]">
               {COUPLE.tagline}
             </p>
@@ -100,15 +133,17 @@ export default function IntroGate({ open, onOpen, musicOn, onToggleMusic }: Intr
             <p className="mt-2 text-xs uppercase tracking-[0.28em] text-[#f3d48a] [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]">
               27 August 2026
             </p>
-            <div className="mt-5">
-              <MagneticButton
-                className="border border-[#f3d48a] bg-transparent px-10 py-3.5 text-sm tracking-[0.18em] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.55)]"
-                onPointerDown={onOpen}
-                onClick={onOpen}
-              >
-                Open the invite
-              </MagneticButton>
-            </div>
+            <p className="mt-3 text-sm text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.7)]">
+              Thank you for opening this. Your presence means everything to us.
+            </p>
+            <button type="button" onClick={goNext} className="mx-auto mt-5 flex flex-col items-center gap-1 text-white">
+              <span className="text-xs tracking-[0.22em] uppercase [text-shadow:0_2px_8px_rgba(0,0,0,0.65)]">
+                Scroll down
+              </span>
+              <span className="scroll-hint text-3xl leading-none [text-shadow:0_2px_10px_rgba(0,0,0,0.6)]" aria-hidden>
+                ↓
+              </span>
+            </button>
           </div>
         </motion.section>
       )}

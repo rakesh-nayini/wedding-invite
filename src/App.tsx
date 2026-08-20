@@ -17,6 +17,7 @@ import { InviteProvider, useInvite } from './hooks/useInvite'
 import { asset } from './utils/assets'
 
 const THEME_SRC = asset('assets/audio/theme.mp3')
+const TARGET_VOLUME = 0.35
 
 function Experience() {
   const { side } = useInvite()
@@ -24,44 +25,82 @@ function Experience() {
   const { enabled: musicOn, toggle: toggleMusicPref, turnOn: turnMusicOn } = useMusicPreference()
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const openedRef = useRef(false)
+  const fadeRef = useRef<number | null>(null)
   useLenis(opened)
   useScrollResponse(opened)
 
-  const playMusic = useCallback(() => {
+  const fadeIn = useCallback((el: HTMLAudioElement) => {
+    if (fadeRef.current) cancelAnimationFrame(fadeRef.current)
     turnMusicOn()
-    const el = audioRef.current
-    if (!el) return
     el.muted = false
-    el.volume = 0.35
-    el.loop = true
-    const start = () => {
-      void el.play().catch(() => {
-        window.setTimeout(() => {
-          void el.play().catch(() => {})
-        }, 80)
-      })
+    const start = performance.now()
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / 4200)
+      el.volume = TARGET_VOLUME * t
+      if (t < 1) fadeRef.current = requestAnimationFrame(tick)
     }
-    if (el.readyState >= 2) start()
-    else el.addEventListener('canplay', start, { once: true })
-    start()
+    fadeRef.current = requestAnimationFrame(tick)
   }, [turnMusicOn])
 
+  const playMusic = useCallback(
+    (soft = false) => {
+      const el = audioRef.current
+      if (!el) return
+      el.loop = true
+      if (!soft) {
+        el.volume = TARGET_VOLUME
+        turnMusicOn()
+      }
+      const start = () => {
+        void el.play().then(() => {
+          if (soft) fadeIn(el)
+        }).catch(() => {})
+      }
+      start()
+    },
+    [fadeIn, turnMusicOn],
+  )
+
   const openInvite = useCallback(() => {
-    playMusic()
     if (openedRef.current) return
     openedRef.current = true
     setOpened(true)
-  }, [playMusic])
+  }, [])
 
   const toggleMusic = () => {
     const el = audioRef.current
     if (musicOn) {
+      if (fadeRef.current) cancelAnimationFrame(fadeRef.current)
       el?.pause()
       toggleMusicPref()
     } else {
-      playMusic()
+      if (el) el.volume = TARGET_VOLUME
+      playMusic(false)
     }
   }
+
+  useEffect(() => {
+    const el = audioRef.current
+    if (!el) return
+    el.volume = 0
+    const unlock = () => {
+      playMusic(true)
+    }
+    void el
+      .play()
+      .then(() => fadeIn(el))
+      .catch(() => {
+        window.addEventListener('pointerdown', unlock, { once: true })
+        window.addEventListener('touchstart', unlock, { once: true })
+        window.addEventListener('wheel', unlock, { once: true })
+      })
+    return () => {
+      window.removeEventListener('pointerdown', unlock)
+      window.removeEventListener('touchstart', unlock)
+      window.removeEventListener('wheel', unlock)
+      if (fadeRef.current) cancelAnimationFrame(fadeRef.current)
+    }
+  }, [fadeIn, playMusic])
 
   useEffect(() => {
     document.body.style.overflow = opened ? '' : 'hidden'
