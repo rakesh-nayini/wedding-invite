@@ -16,6 +16,13 @@ import { InviteProvider, useInvite } from './hooks/useInvite'
 
 function startMusic() {
   window.__inviteMusicOff = false
+  const el = document.getElementById('invite-music') as HTMLAudioElement | null
+  if (el) {
+    el.muted = false
+    el.loop = true
+    if (el.paused) el.volume = 0.12
+    void el.play().catch(() => {})
+  }
   window.inviteMusicStart?.()
 }
 
@@ -72,12 +79,7 @@ function Experience() {
           {musicPlaying ? 'Music On' : 'Music Off'}
         </button>
       )}
-      <IntroGate
-        musicPlaying={musicPlaying}
-        onToggleMusic={toggleMusic}
-        onPrimeMusic={startMusic}
-        onContinue={onContinue}
-      />
+      <IntroGate onPrimeMusic={startMusic} onContinue={onContinue} />
       <main key={side}>
         <OurStory />
         <Events />

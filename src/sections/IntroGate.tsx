@@ -6,8 +6,6 @@ import { useInvite } from '../hooks/useInvite'
 import { useReducedMotion } from '../hooks/useMediaQuery'
 
 interface IntroGateProps {
-  musicPlaying: boolean
-  onToggleMusic: () => void
   onPrimeMusic: () => void
   onContinue: () => void
 }
@@ -23,19 +21,7 @@ const PANS = [
   { initial: { scale: 1, x: 0, y: 0 }, animate: { scale: 1.042, x: -6, y: 0 } },
 ]
 
-function playThemeNow() {
-  window.__inviteMusicOff = false
-  const audio = document.getElementById('invite-music') as HTMLAudioElement | null
-  if (audio) {
-    audio.muted = false
-    audio.loop = true
-    if (audio.paused) audio.volume = 0
-    void audio.play().catch(() => {})
-  }
-  window.inviteMusicStart?.()
-}
-
-export default function IntroGate({ musicPlaying, onToggleMusic, onPrimeMusic, onContinue }: IntroGateProps) {
+export default function IntroGate({ onPrimeMusic, onContinue }: IntroGateProps) {
   const { firstName, secondName, familyLine, side } = useInvite()
   const reduced = useReducedMotion()
   const slides = introImagesFor(side)
@@ -66,14 +52,12 @@ export default function IntroGate({ musicPlaying, onToggleMusic, onPrimeMusic, o
   const begin = () => {
     if (begunRef.current) return
     begunRef.current = true
-    playThemeNow()
     onPrimeMusic()
     onContinue()
     setBegun(true)
   }
 
   const continueDown = () => {
-    playThemeNow()
     onPrimeMusic()
     onContinue()
     document.getElementById('story')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -130,7 +114,6 @@ export default function IntroGate({ musicPlaying, onToggleMusic, onPrimeMusic, o
             <button
               type="button"
               onPointerDown={begin}
-              onClick={begin}
               className="mt-8 min-h-12 min-w-[16rem] rounded-full bg-[#f3d48a] px-8 py-3.5 font-serif text-lg text-[#5c1c1c] shadow-[0_12px_30px_rgba(0,0,0,0.35)]"
             >
               Open invitation
@@ -144,14 +127,6 @@ export default function IntroGate({ musicPlaying, onToggleMusic, onPrimeMusic, o
 
       {begun && (
         <>
-          <button
-            type="button"
-            data-music-toggle
-            onClick={onToggleMusic}
-            className="absolute right-4 top-4 z-20 rounded-full border border-white/50 bg-white/80 px-3 py-2 text-[10px] uppercase tracking-[0.22em] text-maroon"
-          >
-            {musicPlaying ? 'Music On' : 'Music Off'}
-          </button>
           <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 px-5 pb-[max(1.4rem,env(safe-area-inset-bottom))] pt-24 text-center">
             <p className="font-serif italic text-[16px] leading-snug text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.65)]">
               {COUPLE.tagline}
