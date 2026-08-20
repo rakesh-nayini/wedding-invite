@@ -3,7 +3,6 @@ import { motion } from 'framer-motion'
 import type { WeddingEvent } from '../data/wedding'
 import InviteNote from './InviteNote'
 
-/** Groom Wedding — two threads meet into a knot, then the invitation breathes in. */
 export default function KnotReveal({
   event,
   onComplete,
@@ -13,16 +12,20 @@ export default function KnotReveal({
 }) {
   const [tied, setTied] = useState(false)
 
+  const tie = () => {
+    if (tied) return
+    setTied(true)
+    window.setTimeout(() => onComplete?.(), 800)
+  }
+
   return (
     <div className="mx-auto w-full max-w-md">
       <button
         type="button"
-        onClick={() => {
-          if (tied) return
-          setTied(true)
-          window.setTimeout(() => onComplete?.(), 800)
-        }}
-        className="relative flex h-56 w-full items-center justify-center overflow-hidden rounded-[2rem] bg-[#fffaf4] shadow-[0_18px_40px_rgba(92,26,26,0.07)]"
+        onClick={tie}
+        className={`relative flex min-h-64 w-full flex-col items-center justify-center overflow-hidden rounded-[2rem] border-2 px-4 pb-5 pt-6 ${
+          tied ? 'border-gold/30 bg-[#fffaf4]' : 'tap-glow border-[#c9a962] bg-[#fff6e8]'
+        }`}
       >
         <svg viewBox="0 0 320 140" className="h-28 w-full px-8" aria-hidden>
           <motion.path
@@ -52,7 +55,9 @@ export default function KnotReveal({
           />
         </svg>
         {!tied && (
-          <p className="absolute bottom-6 text-[10px] uppercase tracking-[0.35em] text-maroon/50">{event.whisper}</p>
+          <span className="mt-2 inline-flex min-h-12 items-center rounded-full bg-[#f3d48a] px-6 py-3 font-serif text-lg text-[#5c1c1c] shadow-[0_8px_20px_rgba(0,0,0,0.12)]">
+            Tap to tie the knot
+          </span>
         )}
       </button>
       <motion.div

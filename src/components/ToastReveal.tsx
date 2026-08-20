@@ -4,7 +4,6 @@ import confetti from 'canvas-confetti'
 import type { WeddingEvent } from '../data/wedding'
 import InviteNote from './InviteNote'
 
-/** Groom Reception — two glasses meet; a single clear clink of gold. */
 export default function ToastReveal({
   event,
   onComplete,
@@ -32,15 +31,17 @@ export default function ToastReveal({
       <button
         type="button"
         onClick={toast}
-        className="relative flex h-56 w-full items-center justify-center overflow-hidden rounded-[2rem] bg-[#fffaf4]"
+        className={`relative flex min-h-64 w-full flex-col items-center justify-center overflow-hidden rounded-[2rem] border-2 px-4 pb-5 pt-8 ${
+          cheers ? 'border-gold/30 bg-[#fffaf4]' : 'tap-glow border-[#c9a962] bg-[#fff6e8]'
+        }`}
       >
         <motion.span
-          className="absolute h-24 w-14 rounded-b-[2rem] rounded-t-lg border-2 border-gold/70 bg-white/40"
+          className="absolute top-10 h-24 w-14 rounded-b-[2rem] rounded-t-lg border-2 border-gold/70 bg-white/40"
           animate={cheers ? { x: 18, rotate: 12 } : { x: -36, rotate: -8 }}
           transition={{ type: 'spring', stiffness: 160, damping: 14 }}
         />
         <motion.span
-          className="absolute h-24 w-14 rounded-b-[2rem] rounded-t-lg border-2 border-roseGold/70 bg-white/40"
+          className="absolute top-10 h-24 w-14 rounded-b-[2rem] rounded-t-lg border-2 border-roseGold/70 bg-white/40"
           animate={cheers ? { x: -18, rotate: -12 } : { x: 36, rotate: 8 }}
           transition={{ type: 'spring', stiffness: 160, damping: 14 }}
         />
@@ -52,9 +53,15 @@ export default function ToastReveal({
             transition={{ duration: 0.9 }}
           />
         )}
-        <p className="absolute bottom-6 text-[10px] uppercase tracking-[0.35em] text-maroon/50">
-          {cheers ? 'To forever' : event.whisper}
-        </p>
+        <span className="relative mt-28">
+          {cheers ? (
+            <span className="font-serif text-lg text-maroon">To forever</span>
+          ) : (
+            <span className="inline-flex min-h-12 items-center rounded-full bg-[#f3d48a] px-6 py-3 font-serif text-lg text-[#5c1c1c] shadow-[0_8px_20px_rgba(0,0,0,0.12)]">
+              Tap to clink the glasses
+            </span>
+          )}
+        </span>
       </button>
       <motion.div animate={cheers ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }} className="mt-4 rounded-[2rem] bg-white/85">
         {cheers && <InviteNote event={event} />}
